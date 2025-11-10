@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Atithi - Hotel Dashboard</title>
+    <style>
+        /* ---- Reset ---- */
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+        body{
+            font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg,#e3f2fd 0%,#f3e5f5 50%,#fce4ec 100%);
+            color:#263238;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            min-height:100vh;
+            overflow-x:hidden;
+            padding-bottom:env(safe-area-inset-bottom, 0); /* safe area for notch */
+        }
+
+        /* ---- Layout ---- */
+        .sidebar{
+            position:fixed;left:0;top:0;height:100vh;width:280px;
+            background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+            box-shadow:4px 0 20px rgba(0,0,0,.08);z-index:1000;overflow-y:auto;
+            transition: transform .35s cubic-bezier(.4,0,.2,1);
+        }
+        .sidebar.hidden{transform:translateX(-100%)}
+        .main-content{
+            margin-left:280px;padding:28px;transition:margin-left .35s cubic-bezier(.4,0,.2,1);min-height:100vh;
+        }
+        .main-content.expanded{margin-left:0}
+
+        /* ---- Sidebar header ---- */
+        .sidebar-header{
+            padding:28px 22px;background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);color:#fff;text-align:center;
+            border-bottom-left-radius:12px;border-bottom-right-radius:12px;
+        }
+        .sidebar-logo{width:64px;height:64px;margin:0 auto 10px;border-radius:50%;background:#fff;color:#37474f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+        .sidebar-header h2{font-size:20px;letter-spacing:.8px}
+        .sidebar-header p{font-size:12px;opacity:.95}
+
+        .sidebar-nav{padding:18px 0}
+        .nav-item{
+            display:flex;align-items:center;padding:14px 20px;color:#546e7a;text-decoration:none;border-left:4px solid transparent;font-weight:600;font-size:15px;
+            transition:all .18s ease;border-radius:10px;margin:6px 12px;
+        }
+        .nav-item:hover{background:linear-gradient(90deg,rgba(100,181,246,.06),transparent);color:#0b6fb0;border-left-color:#64b5f6}
+        .nav-item.active{background:linear-gradient(90deg,rgba(100,181,246,.1),transparent);border-left-color:#64b5f6;color:#0b6fb0}
+        .nav-item-icon{width:36px;text-align:center;margin-right:12px;font-size:18px}
+
+        /* ---- Top bar ---- */
+        .top-bar{
+            display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;background:rgba(255,255,255,.96);
+            padding:18px;border-radius:14px;box-shadow:0 6px 22px rgba(0,0,0,.06);backdrop-filter:blur(6px);
+        }
+        .menu-toggle{
+            display:none;background:linear-gradient(135deg,#64b5f6 0%,#f06292 100%);color:#fff;border:none;padding:10px 12px;border-radius:10px;font-weight:700;
+            cursor:pointer;font-size:18px;box-shadow:0 8px 20px rgba(100,181,246,.22)
+        }
+
+        .welcome-text h1{font-size:22px;font-weight:800;color:#263238}
+        .welcome-text p{font-size:13px;color:#607d8b;margin-top:4px}
+
+        .user-profile{display:flex;align-items:center;gap:12px}
+        .user-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#64b5f6 0%,#f06292 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+        .user-info h3{font-size:14px;font-weight:700}
+        .user-info p{font-size:12px;color:#78909c}
+
+        /* ---- Stats grid (desktop) ---- */
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:20px}
+        .stat-card{
+            background:rgba(255,255,255,.98);padding:20px;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.06);
+            position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.85);
+        }
+        .stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);transform:scaleX(0);transition:transform .25s}
+        .stat-card:hover{transform:translateY(-6px)}
+        .stat-card:hover::before{transform:scaleX(1)}
+
+        .stat-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+        .stat-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 14px rgba(0,0,0,.06)}
+        .stat-content h3{font-size:14px;color:#607d8b;margin-bottom:6px;font-weight:700}
+        .stat-value{font-size:32px;font-weight:800;background:linear-gradient(135deg,#64b5f6 0%,#f06292 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .stat-subtitle{font-size:13px;color:#90a4ae;margin-top:6px}
+
+        /* trend pill */
+        .stat-trend{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700}
+        .trend-up{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%);color:#2e7d32}
+        .trend-down{background:linear-gradient(135deg,#ffebee 0%,#ffcdd2 100%);color:#c62828}
+
+        /* ---- Action section ---- */
+        .action-section{margin-bottom:18px}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px}
+        .section-title{font-size:18px;font-weight:800;color:#263238}
+        .new-checkin-btn{
+            padding:12px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+            color:#fff;font-weight:800;cursor:pointer;box-shadow:0 12px 28px rgba(100,181,246,.18);font-size:14px;
+        }
+
+        /* ---- Activity list ---- */
+        .activity-card{background:rgba(255,255,255,.98);padding:18px;border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.06);border:1px solid rgba(255,255,255,.85)}
+        .activity-header{font-size:16px;font-weight:800;color:#263238;margin-bottom:12px}
+        .activity-item{display:flex;align-items:center;padding:12px;border-radius:12px;background:#fbfbfb;margin-bottom:10px;transition:all .18s ease;gap:10px}
+        .activity-item:hover{transform:translateX(4px);box-shadow:0 6px 18px rgba(0,0,0,.04)}
+        .activity-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+        .activity-info{flex:1}
+        .activity-title{font-size:14px;font-weight:800;color:#37474f}
+        .activity-time{font-size:12px;color:#90a4ae;margin-top:4px}
+        .activity-room{font-size:13px;color:#546e7a;font-weight:700;padding:6px 10px;border-radius:8px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.04)}
+
+        /* ---- Mobile specific improvements (native feel) ---- */
+        @media (max-width: 768px){
+            .sidebar{transform:translateX(-100%);position:fixed;z-index:1100}
+            .sidebar.active{transform:translateX(0)}
+            .menu-toggle{display:inline-flex;align-items:center;justify-content:center}
+            .main-content{margin-left:0;padding:18px 16px 90px} /* leave space for bottom nav */
+            .top-bar{padding:12px 12px;border-radius:12px;gap:10px}
+            .welcome-text h1{font-size:18px}
+            .user-avatar{width:40px;height:40px;font-size:14px}
+            .stats-grid{grid-template-columns:1fr;gap:12px}
+            .stat-card{padding:16px;border-radius:12px}
+            .stat-icon{width:48px;height:48px;font-size:20px;border-radius:10px}
+            .stat-value{font-size:26px}
+            .new-checkin-btn{display:none} /* hide desktop button and use FAB */
+            .activity-card{padding:14px}
+            .activity-item{padding:12px}
+        }
+
+        /* ---- Very small phones ---- */
+        @media (max-width:420px){
+            .main-content{padding:14px 12px 100px}
+            .welcome-text h1{font-size:16px}
+            .stat-value{font-size:22px}
+            .activity-header{font-size:15px}
+        }
+
+        /* ---- Bottom navigation (mobile native) ---- */
+        .bottom-nav{
+            position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);height:64px;padding:8px 10px;
+            display:none;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.96));
+            box-shadow:0 -8px 30px rgba(0,0,0,.08);z-index:1200;border-top-left-radius:12px;border-top-right-radius:12px;
+        }
+        .bottom-nav .nav-btn{flex:1;text-align:center;padding:8px 6px;border-radius:12px;color:#607d8b;font-weight:700;font-size:12px}
+        .bottom-nav .nav-btn.active{color:#0b6fb0}
+        .fab{
+            position:fixed;right:20px;bottom:20px;width:64px;height:64px;border-radius:999px;background:linear-gradient(135deg,#64b5f6 0%,#f06292 100%);
+            display:none;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:900;z-index:1250;box-shadow:0 12px 36px rgba(100,181,246,.26);cursor:pointer;
+        }
+
+        @media (max-width:768px){
+            .bottom-nav{display:flex}
+            .fab{display:flex}
+        }
+
+        /* ---- Sidebar overlay ---- */
+        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1090;opacity:0;transition:opacity .18s}
+        .sidebar-overlay.active{display:block;opacity:1}
+
+        /* ---- Scrollbar ---- */
+        ::-webkit-scrollbar{width:8px;height:8px}
+        ::-webkit-scrollbar-track{background:#f1f1f1;border-radius:8px}
+        ::-webkit-scrollbar-thumb{background:linear-gradient(135deg,#64b5f6,#f06292);border-radius:8px}
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar (desktop) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🏨</div>
+            <h2>Atithi</h2>
+            <p>Hotel Management</p>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="#" class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span> Dashboard</a>
+            <a href="#" class="nav-item" data-page="rooms"><span class="nav-item-icon">🛏️</span> Room Available</a>
+            <a href="#" class="nav-item" data-page="checkins"><span class="nav-item-icon">✅</span> Check-ins</a>
+            <a href="#" class="nav-item" data-page="checkouts"><span class="nav-item-icon">🚪</span> Check-outs</a>
+            <a href="#" class="nav-item" data-page="pax"><span class="nav-item-icon">🧾</span> Total Pax</a>
+            <a href="#" class="nav-item" data-page="new-checkin"><span class="nav-item-icon">➕</span> New Check-in</a>
+            <a href="#" class="nav-item" data-page="reports"><span class="nav-item-icon">📈</span> Reports</a>
+            <a href="#" class="nav-item" data-page="settings"><span class="nav-item-icon">⚙️</span> Settings</a>
+            <a href="#" class="nav-item" data-page="logout"><span class="nav-item-icon">🚪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <!-- Main content -->
+    <main class="main-content" id="mainContent" role="main">
+        <div class="top-bar">
+            <button id="menuToggle" class="menu-toggle" aria-label="Open menu">☰</button>
+            <div class="welcome-text">
+                <h1>Welcome Back, Hotel Manager!</h1>
+                <p id="dateTime">Monday, November 10, 2025 • 2:45 PM</p>
+            </div>
+            <!-- <div class="user-profile" aria-hidden="false">
+                <div class="user-avatar" aria-hidden="true">HM</div>
+                <div class="user-info">
+                    <h3>Hotel Manager</h3>
+                    <p>Owner</p>
+                </div>
+            </div> -->
+        </div>
+
+        <!-- Stats -->
+        <section class="stats-grid" aria-label="Key metrics">
+            <article class="stat-card" role="article" aria-labelledby="rooms-available">
+                <div class="stat-header">
+                    <div class="stat-icon" aria-hidden="true">🛏️</div>
+                    <div class="stat-trend trend-up" aria-hidden="true">↑ 12%</div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="rooms-available">Rooms Available</h3>
+                    <div class="stat-value" aria-live="polite">24</div>
+                    <div class="stat-subtitle">Out of 50 total rooms</div>
+                </div>
+            </article>
+
+            <article class="stat-card" role="article" aria-labelledby="checkins-today">
+                <div class="stat-header">
+                    <div class="stat-icon" aria-hidden="true">✅</div>
+                    <div class="stat-trend trend-up" aria-hidden="true">↑ 8%</div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="checkins-today">Check-ins Today</h3>
+                    <div class="stat-value">18</div>
+                    <div class="stat-subtitle">+5 expected arrivals</div>
+                </div>
+            </article>
+
+            <article class="stat-card" role="article" aria-labelledby="checkouts-today">
+                <div class="stat-header">
+                    <div class="stat-icon" aria-hidden="true">🚪</div>
+                    <div class="stat-trend trend-down" aria-hidden="true">↓ 3%</div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="checkouts-today">Check-outs Today</h3>
+                    <div class="stat-value">12</div>
+                    <div class="stat-subtitle">+4 pending departures</div>
+                </div>
+            </article>
+
+            <article class="stat-card" role="article" aria-labelledby="total-pax">
+                <div class="stat-header">
+                    <div class="stat-icon" aria-hidden="true">🧾</div>
+                    <div class="stat-trend trend-up" aria-hidden="true">↑ 15%</div>
+                </div>
+                <div class="stat-content">
+                    <h3 id="total-pax">Total Pax</h3>
+                    <div class="stat-value">42</div>
+                    <div class="stat-subtitle">Active bookings</div>
+                </div>
+            </article>
+        </section>
+
+        <!-- Quick actions -->
+        <section class="action-section" aria-label="Quick actions">
+            <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+                <!-- desktop button hidden on mobile -->
+                <button id="newCheckinBtn" class="new-checkin-btn" aria-label="New check-in">New Check-in</button>
+            </div>
+        </section>
+
+        <!-- Recent activity -->
+        <section class="activity-card" aria-labelledby="recent-activity">
+            <h3 id="recent-activity" class="activity-header">Recent Activity</h3>
+
+            <div class="activity-item">
+                <div class="activity-icon checkin" aria-hidden="true">✅</div>
+                <div class="activity-info">
+                    <div class="activity-title">Guest Check-in</div>
+                    <div class="activity-time">15 minutes ago</div>
+                </div>
+                <div class="activity-room">Room 301</div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon checkout" aria-hidden="true">🚪</div>
+                <div class="activity-info">
+                    <div class="activity-title">Guest Check-out</div>
+                    <div class="activity-time">1 hour ago</div>
+                </div>
+                <div class="activity-room">Room 205</div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon checkin" aria-hidden="true">✅</div>
+                <div class="activity-info">
+                    <div class="activity-title">Guest Check-in</div>
+                    <div class="activity-time">2 hours ago</div>
+                </div>
+                <div class="activity-room">Room 410</div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon checkout" aria-hidden="true">🚪</div>
+                <div class="activity-info">
+                    <div class="activity-title">Guest Check-out</div>
+                    <div class="activity-time">3 hours ago</div>
+                </div>
+                <div class="activity-room">Room 108</div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon checkin" aria-hidden="true">✅</div>
+                <div class="activity-info">
+                    <div class="activity-title">Guest Check-in</div>
+                    <div class="activity-time">4 hours ago</div>
+                </div>
+                <div class="activity-room">Room 512</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button (mobile) -->
+    <button class="fab" id="fab" aria-label="Create new check-in">＋</button>
+
+    <!-- Bottom navigation (mobile) -->
+    <!-- <nav class="bottom-nav" id="bottomNav" aria-label="Bottom navigation">
+        <button class="nav-btn active" data-page="dashboard" aria-label="Go to dashboard">📊<div style="font-size:11px">Home</div></button>
+        <button class="nav-btn" data-page="rooms" aria-label="Rooms">🛏️<div style="font-size:11px">Rooms</div></button>
+        <button class="nav-btn" data-page="new-checkin" aria-label="New check-in">➕<div style="font-size:11px">Check-in</div></button>
+        <button class="nav-btn" data-page="pax" aria-label="Total pax">🧾<div style="font-size:11px">Pax</div></button>
+        <button class="nav-btn" data-page="reports" aria-label="Reports">📈<div style="font-size:11px">Reports</div></button>
+    </nav> -->
+
+    <script>
+        // --- Elements ---
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const newCheckinBtn = document.getElementById('newCheckinBtn');
+        const fab = document.getElementById('fab');
+        const bottomNav = document.getElementById('bottomNav');
+        const bottomButtons = bottomNav ? bottomNav.querySelectorAll('.nav-btn') : [];
+        const navItems = document.querySelectorAll('.nav-item');
+
+        // Toggle sidebar for mobile
+        menuToggle && menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            // lock scroll when sidebar open on mobile
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        });
+
+        sidebarOverlay && sidebarOverlay.addEventListener('click', closeSidebar);
+
+        function closeSidebar(){
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Navigation item click (desktop sidebar)
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                // close sidebar on mobile
+                if (window.innerWidth <= 768) closeSidebar();
+                // navigation logic placeholder
+                console.log('Navigate to', item.dataset.page);
+            });
+        });
+
+        // Bottom nav click handling (mobile)
+        bottomButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                bottomButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const page = btn.dataset.page;
+                // mimic navigation: highlight corresponding sidebar item if present
+                navItems.forEach(n => n.classList.toggle('active', n.dataset.page === page));
+                console.log('Bottom nav ->', page);
+                // if checkin pressed, open form (simulate)
+                if (page === 'new-checkin') openNewCheckin();
+            });
+        });
+
+        // New checkin actions
+        function openNewCheckin(){
+    window.location.href = 'new-checkin.html';
+}
+
+        newCheckinBtn && newCheckinBtn.addEventListener('click', openNewCheckin);
+        fab && fab.addEventListener('click', openNewCheckin);
+
+        // Update time (desktop + mobile)
+        function updateTime(){
+            const now = new Date();
+            const options = {
+                weekday:'long', year:'numeric', month:'long', day:'numeric',
+                hour:'2-digit', minute:'2-digit'
+            };
+            const welcomeText = document.getElementById('dateTime');
+            if(welcomeText) welcomeText.textContent = now.toLocaleString('en-US', options);
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // On resize: close sidebar overlay if switching to desktop
+        window.addEventListener('resize', () => {
+            if(window.innerWidth > 768){
+                // make sure sidebar visible in desktop
+                sidebar.classList.remove('hidden');
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                // ensure mobile layout uses bottom nav + fab
+            }
+        });
+
+        // Accessibility: close sidebar with Escape
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape'){
+                closeSidebar();
+            }
+        });
+
+        // Initialization log
+        console.log('Atithi Mobile-first dashboard initialized');
+    </script>
+</body>
+</html>

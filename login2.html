@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atithi - Hotel Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 50%, #fce4ec 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            width: clamp(250px, 40vw, 400px);
+            height: clamp(250px, 40vw, 400px);
+            background: linear-gradient(135deg, #90caf9 0%, #ce93d8 100%);
+            border-radius: 50%;
+            top: -15%;
+            right: -10%;
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: clamp(200px, 35vw, 350px);
+            height: clamp(200px, 35vw, 350px);
+            background: linear-gradient(135deg, #f48fb1 0%, #80deea 100%);
+            border-radius: 50%;
+            bottom: -10%;
+            left: -10%;
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite reverse;
+            filter: blur(40px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: clamp(16px, 4vw, 24px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 100%;
+            max-width: 420px;
+            animation: slideIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #64b5f6 0%, #ba68c8 50%, #f06292 100%);
+            padding: clamp(35px, 8vw, 50px) clamp(20px, 5vw, 30px) clamp(30px, 7vw, 40px);
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.05); opacity: 0.5; }
+        }
+
+        .logo {
+            width: clamp(70px, 15vw, 85px);
+            height: clamp(70px, 15vw, 85px);
+            margin: 0 auto clamp(15px, 3vw, 20px);
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(32px, 7vw, 40px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #64b5f6 0%, #f06292 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            position: relative;
+            z-index: 1;
+            border: 3px solid white;
+        }
+
+        .header h1 {
+            font-size: clamp(24px, 6vw, 30px);
+            margin-bottom: clamp(5px, 1.5vw, 8px);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .header p {
+            font-size: clamp(12px, 2.5vw, 14px);
+            opacity: 0.95;
+            font-weight: 400;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            padding: clamp(30px, 7vw, 45px) clamp(25px, 6vw, 35px);
+            background: white;
+        }
+
+        .input-group {
+            margin-bottom: clamp(20px, 5vw, 28px);
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: clamp(8px, 2vw, 10px);
+            color: #37474f;
+            font-weight: 600;
+            font-size: clamp(13px, 2.8vw, 14px);
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: clamp(14px, 3.5vw, 16px) clamp(45px, 10vw, 50px) clamp(14px, 3.5vw, 16px) clamp(16px, 4vw, 18px);
+            border: 2px solid #eceff1;
+            border-radius: clamp(10px, 2.5vw, 12px);
+            font-size: clamp(14px, 3vw, 15px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafafa;
+            color: #37474f;
+        }
+
+        .input-group input::placeholder {
+            color: #90a4ae;
+            font-size: clamp(13px, 2.8vw, 14px);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: transparent;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.15), 0 0 0 6px rgba(240, 98, 146, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: clamp(14px, 3.5vw, 18px);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: clamp(18px, 4vw, 20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .input-group input:focus + .input-icon {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(22px, 5vw, 30px);
+            font-size: clamp(12px, 2.8vw, 14px);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .remember-forgot label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #546e7a;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .remember-forgot label:hover {
+            color: #37474f;
+        }
+
+        .remember-forgot input[type="checkbox"] {
+            margin-right: 6px;
+            cursor: pointer;
+            width: clamp(16px, 3.5vw, 18px);
+            height: clamp(16px, 3.5vw, 18px);
+            accent-color: #64b5f6;
+        }
+
+        .remember-forgot a {
+            background: linear-gradient(135deg, #64b5f6 0%, #f06292 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .remember-forgot a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #64b5f6 0%, #f06292 100%);
+            transition: width 0.3s;
+        }
+
+        .remember-forgot a:hover::after {
+            width: 100%;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: clamp(15px, 4vw, 17px);
+            background: linear-gradient(135deg, #64b5f6 0%, #ba68c8 50%, #f06292 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: clamp(10px, 2.5vw, 12px);
+            font-size: clamp(14px, 3.2vw, 16px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(100, 181, 246, 0.25);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            animation: gradientShift 3s ease infinite;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(100, 181, 246, 0.35);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: clamp(22px, 5vw, 30px);
+            color: #78909c;
+            font-size: clamp(11px, 2.5vw, 13px);
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: clamp(12px, 3vw, 14px) clamp(15px, 3.5vw, 18px);
+            border-radius: clamp(8px, 2vw, 10px);
+            margin-bottom: clamp(20px, 4vw, 25px);
+            display: none;
+            font-size: clamp(12px, 2.8vw, 14px);
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            color: #c62828;
+            border-left: 4px solid #ef5350;
+        }
+
+        .alert.success {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            color: #2e7d32;
+            border-left: 4px solid #66bb6a;
+        }
+
+        /* Extra small devices (phones, less than 375px) */
+        @media (max-width: 374px) {
+            body {
+                padding: 10px;
+            }
+            
+            .login-container {
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 30px 20px 25px;
+            }
+            
+            .form-container {
+                padding: 25px 20px;
+            }
+        }
+
+        /* Small devices (phones, 375px to 575px) */
+        @media (min-width: 375px) and (max-width: 575px) {
+            .login-container {
+                max-width: 380px;
+            }
+        }
+
+        /* Medium devices (tablets, 576px to 767px) */
+        @media (min-width: 576px) and (max-width: 767px) {
+            .login-container {
+                max-width: 400px;
+            }
+        }
+
+        /* Large devices (desktops, 768px and up) */
+        @media (min-width: 768px) {
+            .login-container {
+                max-width: 420px;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (orientation: landscape) and (max-height: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 25px 25px 20px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+            
+            .form-container {
+                padding: 25px 30px;
+            }
+            
+            .input-group {
+                margin-bottom: 18px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .login-container {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Touch device optimization */
+        @media (hover: none) and (pointer: coarse) {
+            .input-group input,
+            .login-btn {
+                min-height: 48px;
+            }
+            
+            .remember-forgot a,
+            .remember-forgot label {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <div class="logo">🏨</div>
+            <h1>Atithi</h1>
+            <p>Hotel Management System<br>Police Collaboration Portal</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="alert" id="alert"></div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="hotelId">Hotel ID / Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="hotelId" name="hotelId" required autocomplete="username" placeholder="Enter your hotel ID">
+                        <span class="input-icon">🏢</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+                        <span class="input-icon">🔒</span>
+                    </div>
+                </div>
+                
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox" id="remember">
+                        Remember me
+                    </label>
+                    <a href="#" id="forgotLink">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="login-btn">Login to Dashboard</button>
+            </form>
+
+            <!-- ✅ Added Register link here -->
+            <div class="footer-text">
+                <p>Don't have an account? <a href="register.html" style="font-weight:600; text-decoration:none; color:#ba68c8;">Register</a></p>
+            </div>
+
+            <div class="footer-text">
+                🔒 Secure Hotel Portal<br>
+                © 2024 Atithi - Police Collaboration System
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const alertBox = document.getElementById('alert');
+        const forgotLink = document.getElementById('forgotLink');
+
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = `alert ${type}`;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 4000);
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const hotelId = document.getElementById('hotelId').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            if (hotelId.length < 3) {
+                showAlert('Please enter a valid Hotel ID', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            showAlert('Verifying credentials...', 'success');
+            
+            setTimeout(() => {
+                showAlert('Login successful! Redirecting to dashboard...', 'success');
+                
+                if (remember) {
+                    localStorage.setItem('rememberMe', 'true');
+                    localStorage.setItem('hotelId', hotelId);
+                }
+
+                // ✅ Redirect to dashboard2.html
+                setTimeout(() => {
+                    window.location.href = "dashboard2.html";
+                }, 2000);
+            }, 1500);
+        });
+
+        forgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAlert('Please contact system administrator for password reset', 'error');
+        });
+
+        if (localStorage.getItem('rememberMe') === 'true') {
+            document.getElementById('remember').checked = true;
+            const savedHotelId = localStorage.getItem('hotelId');
+            if (savedHotelId) {
+                document.getElementById('hotelId').value = savedHotelId;
+            }
+        }
+    </script>
+</body>
+</html>

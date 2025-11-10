@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AATITHI - Hotel / Sarai License Registration</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{
+  background:linear-gradient(135deg,#e3f2fd 0%,#f3e5f5 50%,#fce4ec 100%);
+  min-height:100vh;display:flex;justify-content:center;align-items:center;
+  padding:30px;overflow-x:hidden;position:relative;
+}
+body::before,body::after{
+  content:'';position:absolute;border-radius:50%;filter:blur(40px);opacity:.4;
+}
+body::before{width:400px;height:400px;top:-15%;right:-10%;background:linear-gradient(135deg,#90caf9 0%,#ce93d8 100%);animation:float 8s ease-in-out infinite;}
+body::after{width:350px;height:350px;bottom:-10%;left:-10%;background:linear-gradient(135deg,#f48fb1 0%,#80deea 100%);animation:float 6s ease-in-out infinite reverse;}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,20px)}}
+
+.container{
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(15px);
+  border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.1);
+  max-width:900px;width:100%;overflow:hidden;position:relative;z-index:2;
+}
+.header{
+  background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+  color:#fff;text-align:center;padding:30px 20px;
+}
+.header h1{font-size:28px;margin-bottom:5px;font-weight:700;}
+.header p{font-size:14px;opacity:.95;}
+.header h2{margin-top:8px;font-size:18px;font-weight:600;}
+
+form{padding:30px 40px;}
+.section{display:none;animation:fade .4s ease;}
+.section.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.section h3{
+  font-size:20px;font-weight:700;margin-bottom:15px;
+  background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px 25px;}
+label{font-weight:600;font-size:14px;color:#37474f;margin-bottom:4px;display:block;}
+label span{color:#f06292;}
+input,select,textarea{
+  width:100%;padding:10px;border:2px solid #eceff1;border-radius:10px;
+  background:#fafafa;font-size:14px;color:#37474f;transition:all .3s;
+}
+textarea{resize:none;height:60px;}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:transparent;background:#fff;
+  box-shadow:0 0 0 3px rgba(100,181,246,.15),0 0 0 6px rgba(240,98,146,.08);
+}
+.file-note{font-size:12px;color:#777;margin-top:3px;}
+.declaration{display:flex;align-items:flex-start;gap:10px;margin-top:20px;font-size:14px;line-height:1.6;}
+.declaration input{width:18px;height:18px;accent-color:#ba68c8;margin-top:3px;cursor:pointer;}
+
+.nav-buttons{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:25px;flex-wrap:wrap;gap:10px;
+}
+button{
+  padding:12px 22px;border:none;border-radius:10px;color:#fff;font-weight:600;
+  cursor:pointer;background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+  background-size:200% 200%;animation:gradientShift 4s ease infinite;
+  box-shadow:0 8px 20px rgba(100,181,246,0.25);transition:.3s;
+}
+button:hover{transform:translateY(-2px);}
+.close-btn{background:#c62828;}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.footer{text-align:center;padding:15px;background:#fafafa;font-size:13px;color:#78909c;}
+@media(max-width:600px){form{padding:25px 20px;}.form-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Police Commissionerate</h1>
+    <p>Bhubaneswar, Cuttack - Odisha</p>
+    <h2>AATITHI - Hotel / Sarai License Registration</h2>
+  </div>
+
+  <form id="regForm">
+    <!-- 1. Applicant Details -->
+    <div class="section active">
+      <h3>1. Applicant Details</h3>
+      <div class="form-grid">
+        <div><label>Application Type<span>*</span></label><input type="text" value="Sarai License" readonly></div>
+        <div><label>Application Sub Type<span>*</span></label><select><option>-----Select-----</option><option>New</option><option>Renewal</option></select></div>
+        <div><label>Application From Type<span>*</span></label><select><option>-----Select Form Type-----</option><option>Individual</option><option>Organization</option></select></div>
+        <div><label>Applicant’s Name<span>*</span></label><input placeholder="Applicant Name"></div>
+        <div><label>Father’s/ Husband’s Name<span>*</span></label><input placeholder="Father’s/ Husband’s Name"></div>
+        <div><label>Gender<span>*</span></label><select><option>--Select--</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+        <div><label>Email</label><input type="email" placeholder="Email Id"></div>
+        <div><label>Mobile Number<span>*</span></label><input type="tel" placeholder="Mobile Number"></div>
+        <div><label>Address<span>*</span></label><textarea placeholder="Address"></textarea></div>
+        <div><label>State<span>*</span></label><select><option>--Select State--</option><option>Odisha</option></select></div>
+        <div><label>District<span>*</span></label><select><option>--Select Dist--</option><option>Cuttack</option><option>Khordha</option></select></div>
+        <div><label>Police Station<span>*</span></label><input placeholder="Police Station"></div>
+        <div><label>Pin Code<span>*</span></label><input placeholder="Pincode"></div>
+        <div><label>Aadhaar Number<span>*</span></label><input placeholder="Aadhaar Number"></div>
+        <div><label>PAN Number</label><input placeholder="PAN Number"></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 2. Hotel/Guest House/Lodge Details -->
+    <div class="section">
+      <h3>2. Hotel/Guest House/Lodge Details</h3>
+      <div class="form-grid">
+        <div><label>Name of Hotel/Guest House/Lodge<span>*</span></label><input></div>
+        <div><label>Registration Number<span>*</span></label><input></div>
+        <div><label>Name of Owner<span>*</span></label><input></div>
+        <div><label>Gender<span>*</span></label><select><option>--Select--</option><option>Male</option><option>Female</option></select></div>
+        <div><label>Address<span>*</span></label><textarea></textarea></div>
+        <div><label>State<span>*</span></label><select><option>--Select State--</option><option>Odisha</option></select></div>
+        <div><label>District<span>*</span></label><select><option>--Select Dist--</option></select></div>
+        <div><label>Police Station<span>*</span></label><input></div>
+        <div><label>Contact Number<span>*</span></label><input></div>
+        <div><label>Pin Code<span>*</span></label><input></div>
+        <div><label>Total Number of Employees<span>*</span></label><input></div>
+        <div><label>Number of Rooms<span>*</span></label><input></div>
+        <div><label>Accommodation Strength<span>*</span></label><input></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="prev">⬅ Previous</button><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 3. Employee Details -->
+    <div class="section">
+      <h3>3. Employee Details</h3>
+      <div class="form-grid">
+        <div><label>Name of Employee<span>*</span></label><input></div>
+        <div><label>Designation<span>*</span></label><input></div>
+        <div><label>Mobile Number<span>*</span></label><input></div>
+        <div><label>Aadhaar Number<span>*</span></label><input></div>
+        <div><label>PAN Number</label><input></div>
+        <div><label>Address<span>*</span></label><textarea></textarea></div>
+        <div><label>State<span>*</span></label><select><option>--Select State--</option></select></div>
+        <div><label>District<span>*</span></label><select><option>--Select Dist--</option></select></div>
+        <div><label>Police Station<span>*</span></label><input></div>
+        <div><label>Pin Code<span>*</span></label><input></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="prev">⬅ Previous</button><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 4. Eating Place -->
+    <div class="section">
+      <h3>4. Eating Place / Restaurant / Coffee Shop etc.</h3>
+      <div class="form-grid">
+        <div><label>Name</label><input></div>
+        <div><label>Location</label><input></div>
+        <div><label>Details of Bar License</label><input></div>
+        <div><label>Capacity</label><input></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="prev">⬅ Previous</button><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 5. Parking Place -->
+    <div class="section">
+      <h3>5. Details of Parking Place</h3>
+      <div class="form-grid">
+        <div><label>Location<span>*</span></label><input></div>
+        <div><label>Ownership of Parking Place<span>*</span></label><input></div>
+        <div><label>Capacity<span>*</span></label><input></div>
+        <div><label>Security Measures<span>*</span></label><input></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="prev">⬅ Previous</button><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 6. Game Facilities -->
+    <div class="section">
+      <h3>6. Details about Game Facilities</h3>
+      <div class="form-grid">
+        <div><label>Details<span>*</span></label><textarea></textarea></div>
+        <div><label>Location (Floor etc)<span>*</span></label><input></div>
+      </div>
+      <div class="nav-buttons"><button type="button" class="prev">⬅ Previous</button><button type="button" class="next">Next ➜</button></div>
+    </div>
+
+    <!-- 7. Security + Documents -->
+    <div class="section">
+      <h3>7. Security Features + Documents</h3>
+      <div class="form-grid">
+        <div><label>Security Features<span>*</span></label><input></div>
+        <div><label>Details<span>*</span></label><textarea></textarea></div>
+      </div>
+      <h3>Documents Required</h3>
+      <div class="form-grid">
+        <div><label>Identity Proof<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>Land Record/Lease Deed<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>Fire Safety Certificate<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>Approval Plan of BDA/CDA<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>Trade License<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>Pollution Certificate<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>CCTV Installation Footage<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>BMC/CMC Tax Receipt<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+        <div><label>All Employee List with Police Verification Report<span>*</span></label><input type="file" accept=".jpg,.jpeg,.png,.pdf"></div>
+      </div>
+      <div class="declaration">
+        <input type="checkbox" id="agree" required>
+        <label for="agree">I hereby declare that the information provided above is true to my belief and knowledge & agree with the declaration.</label>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="prev">⬅ Previous</button>
+        <button type="submit">Submit</button>
+        <button type="button" class="close-btn" onclick="window.close()">Close</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="footer">© 2024 AATITHI - Police Collaboration System</div>
+</div>
+
+<script>
+const sections=document.querySelectorAll('.section');
+let current=0;
+function showSection(i){sections.forEach((sec,idx)=>sec.classList.toggle('active',idx===i));}
+document.querySelectorAll('.next').forEach(b=>b.onclick=()=>{if(current<sections.length-1){current++;showSection(current);}});
+document.querySelectorAll('.prev').forEach(b=>b.onclick=()=>{if(current>0){current--;showSection(current);}});
+document.getElementById('regForm').addEventListener('submit',e=>{
+  e.preventDefault();alert('✅ Registration Submitted Successfully!');
+  e.target.reset();current=0;showSection(current);
+});
+</script>
+</body>
+</html>
