@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atithi - Total Hotels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 73px;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #1e3c72;
+        }
+
+        .add-hotel-btn {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-hotel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            padding: 0.65rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        /* Hotels Grid */
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hotel-image svg {
+            width: 80px;
+            height: 80px;
+            fill: white;
+            opacity: 0.3;
+        }
+
+        .hotel-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-verified {
+            background: rgba(5, 150, 105, 0.9);
+            color: white;
+        }
+
+        .status-pending {
+            background: rgba(217, 119, 6, 0.9);
+            color: white;
+        }
+
+        .hotel-content {
+            padding: 1.5rem;
+        }
+
+        .hotel-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotel-location {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hotel-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .hotel-stat {
+            text-align: center;
+        }
+
+        .hotel-stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .hotel-stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .hotel-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.65rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2a5298;
+        }
+
+        .btn-manage {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-manage:hover {
+            background: #dee2e6;
+        }
+
+        /* Rating */
+        .hotel-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #fbbf24;
+        }
+
+        .rating-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .hotels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#1e3c72" d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    <circle fill="#dc2626" cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h2>ATITHI</h2>
+                <p>Registered Hotels Network</p>
+            </div>
+        </div>
+        <a href="#" class="back-btn" onclick="window.history.back()">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Total Hotels</h1>
+            <button class="add-hotel-btn" onclick="addNewHotel()">
+                <span>+</span>
+                <span>Add New Hotel</span>
+            </button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Hotels</div>
+                <div class="stat-value">127</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Verified Hotels</div>
+                <div class="stat-value">115</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Rooms</div>
+                <div class="stat-value">3,452</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Guests</div>
+                <div class="stat-value">1,847</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>🔍 Search Hotel</label>
+                    <input type="text" placeholder="Search by name..." oninput="filterHotels()">
+                </div>
+                <div class="filter-group">
+                    <label>📍 Location</label>
+                    <select onchange="filterHotels()">
+                        <option value="">All Locations</option>
+                        <option value="bhubaneswar">Bhubaneswar</option>
+                        <option value="cuttack">Cuttack</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>✓ Status</label>
+                    <select onchange="filterHotels()">
+                        <option value="">All Status</option>
+                        <option value="verified">Verified</option>
+                        <option value="pending">Pending Verification</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>⭐ Rating</label>
+                    <select onchange="filterHotels()">
+                        <option value="">All Ratings</option>
+                        <option value="5">5 Star</option>
+                        <option value="4">4 Star</option>
+                        <option value="3">3 Star</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotels Grid -->
+        <div class="hotels-grid" id="hotelsGrid">
+            <!-- Hotels will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const hotelsData = [
+            {
+                id: 1,
+                name: "The Oberoi Bhubaneswar",
+                location: "Nayapalli, Bhubaneswar",
+                rooms: 156,
+                currentGuests: 98,
+                rating: 5,
+                status: "verified",
+                checkIns: 23,
+                image: "hotel1"
+            },
+            {
+                id: 2,
+                name: "Hotel Presidency",
+                location: "Jayadev Vihar, Bhubaneswar",
+                rooms: 89,
+                currentGuests: 56,
+                rating: 4,
+                status: "verified",
+                checkIns: 12,
+                image: "hotel2"
+            },
+            {
+                id: 3,
+                name: "Mayfair Convention",
+                location: "Jaydev Vihar, Bhubaneswar",
+                rooms: 124,
+                currentGuests: 87,
+                rating: 5,
+                status: "verified",
+                checkIns: 18,
+                image: "hotel3"
+            },
+            {
+                id: 4,
+                name: "Hotel Swosti Premium",
+                location: "Nayapalli, Bhubaneswar",
+                rooms: 95,
+                currentGuests: 64,
+                rating: 4,
+                status: "verified",
+                checkIns: 15,
+                image: "hotel4"
+            },
+            {
+                id: 5,
+                name: "The Crown Hotel",
+                location: "Link Road, Cuttack",
+                rooms: 72,
+                currentGuests: 48,
+                rating: 3,
+                status: "verified",
+                checkIns: 9,
+                image: "hotel5"
+            },
+            {
+                id: 6,
+                name: "Hotel Grand Plaza",
+                location: "Saheed Nagar, Bhubaneswar",
+                rooms: 68,
+                currentGuests: 42,
+                rating: 3,
+                status: "verified",
+                checkIns: 8,
+                image: "hotel6"
+            },
+            {
+                id: 7,
+                name: "Fortune Park",
+                location: "Janpath, Bhubaneswar",
+                rooms: 102,
+                currentGuests: 71,
+                rating: 4,
+                status: "pending",
+                checkIns: 14,
+                image: "hotel7"
+            },
+            {
+                id: 8,
+                name: "Trident Hotel",
+                location: "CB-1, Nayapalli, Bhubaneswar",
+                rooms: 142,
+                currentGuests: 95,
+                rating: 5,
+                status: "verified",
+                checkIns: 21,
+                image: "hotel8"
+            },
+            {
+                id: 9,
+                name: "Hotel Keshari",
+                location: "Station Square, Bhubaneswar",
+                rooms: 54,
+                currentGuests: 31,
+                rating: 3,
+                status: "verified",
+                checkIns: 6,
+                image: "hotel9"
+            }
+        ];
+
+        function renderHotels(hotels = hotelsData) {
+            const grid = document.getElementById('hotelsGrid');
+            grid.innerHTML = hotels.map(hotel => createHotelCard(hotel)).join('');
+        }
+
+        function createHotelCard(hotel) {
+            const stars = '⭐'.repeat(hotel.rating);
+            const statusClass = hotel.status === 'verified' ? 'status-verified' : 'status-pending';
+            const statusText = hotel.status === 'verified' ? '✓ Verified' : '⏳ Pending';
+
+            return `
+                <div class="hotel-card" onclick="viewHotelDetails(${hotel.id})">
+                    <div class="hotel-image">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V7H1v10h22v-6c0-2.21-1.79-4-4-4z"/>
+                        </svg>
+                        <div class="hotel-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="hotel-content">
+                        <h3 class="hotel-name">${hotel.name}</h3>
+                        <div class="hotel-location">
+                            <span>📍</span>
+                            <span>${hotel.location}</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <span class="stars">${stars}</span>
+                            <span class="rating-text">${hotel.rating} Star Hotel</span>
+                        </div>
+                        <div class="hotel-stats">
+                            <div class="hotel-stat">
+                                <div class="hotel-stat-value">${hotel.rooms}</div>
+                                <div class="hotel-stat-label">Total Rooms</div>
+                            </div>
+                            <div class="hotel-stat">
+                                <div class="hotel-stat-value">${hotel.currentGuests}</div>
+                                <div class="hotel-stat-label">Guests</div>
+                            </div>
+                            <div class="hotel-stat">
+                                <div class="hotel-stat-value">${hotel.checkIns}</div>
+                                <div class="hotel-stat-label">Check-ins</div>
+                            </div>
+                        </div>
+                        <div class="hotel-actions">
+                            <button class="action-btn btn-view" onclick="event.stopPropagation(); viewHotelDetails(${hotel.id})">View Details</button>
+                            <button class="action-btn btn-manage" onclick="event.stopPropagation(); manageHotel(${hotel.id})">Manage</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterHotels() {
+            // In a real app, this would filter based on form inputs
+            renderHotels();
+        }
+
+        function viewHotelDetails(id) {
+            alert(`Viewing details for hotel ID: ${id}`);
+        }
+
+        function manageHotel(id) {
+            alert(`Managing hotel ID: ${id}`);
+        }
+
+        function addNewHotel() {
+            alert('Opening Add New Hotel form...');
+        }
+
+        // Initial render
+        renderHotels();
+
+        // Animate stats on load
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        window.addEventListener('load', () => {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach((stat, index) => {
+                const value = parseInt(stat.textContent.replace(/,/g, ''));
+                stat.textContent = '0';
+                setTimeout(() => {
+                    animateValue(stat, 0, value, 1000);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

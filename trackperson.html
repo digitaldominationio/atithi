@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atithi - Track Person</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 73px;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #1e3c72;
+            margin-bottom: 2rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-title {
+            font-size: 1.3rem;
+            color: #1e3c72;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        /* Results Section */
+        .results-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            font-size: 1.1rem;
+            color: #495057;
+        }
+
+        .results-count strong {
+            color: #1e3c72;
+        }
+
+        .export-btn {
+            background: #059669;
+            color: white;
+            padding: 0.65rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+
+        /* Person Card */
+        .person-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 5px solid #1e3c72;
+        }
+
+        .person-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .person-card.suspect {
+            border-left-color: #dc2626;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .person-info {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .person-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .person-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .person-photo svg {
+            width: 40px;
+            height: 40px;
+            fill: #adb5bd;
+        }
+
+        .person-details h3 {
+            color: #1e3c72;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .person-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-suspect {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+            border: 1px solid #dc2626;
+        }
+
+        .status-clear {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+            border: 1px solid #059669;
+        }
+
+        .card-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2a5298;
+        }
+
+        .btn-track {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-track:hover {
+            background: #dee2e6;
+        }
+
+        /* Timeline */
+        .timeline-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1rem;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid #dee2e6;
+            padding-bottom: 1rem;
+        }
+
+        .timeline-item:last-child {
+            border-left-color: transparent;
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: #1e3c72;
+            border-radius: 50%;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+            margin-left: -1.4rem;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-hotel {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        /* No Results */
+        .no-results {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .no-results svg {
+            width: 80px;
+            height: 80px;
+            fill: #dee2e6;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .card-body {
+                grid-template-columns: 1fr;
+            }
+
+            .person-info {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#1e3c72" d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    <circle fill="#dc2626" cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h2>ATITHI</h2>
+                <p>Track Person Location</p>
+            </div>
+        </div>
+        <a href="#" class="back-btn" onclick="window.history.back()">
+            <span>←</span>
+            <span>Back to Dashboard</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1 class="page-title">Track Person</h1>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <h3 class="search-title">🔍 Search for Person</h3>
+            <form class="search-form" onsubmit="searchPerson(event)">
+                <div class="form-group">
+                    <label>Search By</label>
+                    <select id="searchType">
+                        <option value="name">Name</option>
+                        <option value="aadhaar">Aadhaar Number</option>
+                        <option value="mobile">Mobile Number</option>
+                        <option value="suspectId">Suspect ID</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Search Value</label>
+                    <input type="text" id="searchValue" placeholder="Enter search value..." required>
+                </div>
+                <div class="form-group">
+                    <label>Date Range (Optional)</label>
+                    <input type="date" id="dateFrom">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">🔎 Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <div class="results-count">Found <strong id="resultCount">0</strong> results</div>
+                <button class="export-btn" onclick="exportResults()">📥 Export Results</button>
+            </div>
+
+            <div id="resultsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Demo data
+        const demoData = [
+            {
+                id: 1,
+                name: "Rajesh Kumar Mishra",
+                suspectId: "SUS-2024-0923",
+                aadhaar: "XXXX-XXXX-4521",
+                mobile: "+91 98765-43210",
+                age: 34,
+                gender: "Male",
+                status: "suspect",
+                currentHotel: "Hotel Presidency",
+                roomNumber: "412",
+                checkIn: "2024-11-11 14:45",
+                checkOut: null,
+                offense: "Theft, Fraud",
+                timeline: [
+                    { hotel: "Hotel Presidency, Bhubaneswar", date: "2024-11-11 14:45", status: "Current" },
+                    { hotel: "Hotel Swosti Premium, Bhubaneswar", date: "2024-11-08 10:20", status: "Checked Out" },
+                    { hotel: "The Crown, Cuttack", date: "2024-11-05 18:30", status: "Checked Out" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Amit Patel",
+                suspectId: null,
+                aadhaar: "XXXX-XXXX-7890",
+                mobile: "+91 98123-45678",
+                age: 28,
+                gender: "Male",
+                status: "clear",
+                currentHotel: "Hotel Mayfair",
+                roomNumber: "205",
+                checkIn: "2024-11-10 11:30",
+                checkOut: null,
+                offense: null,
+                timeline: [
+                    { hotel: "Hotel Mayfair, Bhubaneswar", date: "2024-11-10 11:30", status: "Current" },
+                    { hotel: "Hotel Grand Plaza, Bhubaneswar", date: "2024-11-07 09:15", status: "Checked Out" }
+                ]
+            },
+            {
+                id: 3,
+                name: "Priya Sharma",
+                suspectId: null,
+                aadhaar: "XXXX-XXXX-1234",
+                mobile: "+91 91234-56789",
+                age: 31,
+                gender: "Female",
+                status: "clear",
+                currentHotel: null,
+                roomNumber: null,
+                checkIn: null,
+                checkOut: "2024-11-09 12:00",
+                offense: null,
+                timeline: [
+                    { hotel: "The Oberoi, Bhubaneswar", date: "2024-11-06 15:20 - 2024-11-09 12:00", status: "Checked Out" },
+                    { hotel: "Hotel Fortune, Cuttack", date: "2024-11-03 14:00 - 2024-11-06 10:00", status: "Checked Out" }
+                ]
+            }
+        ];
+
+        function searchPerson(event) {
+            event.preventDefault();
+            
+            const searchValue = document.getElementById('searchValue').value.toLowerCase();
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultCount = document.getElementById('resultCount');
+
+            // Filter results (demo - would normally search database)
+            const results = demoData.filter(person => 
+                person.name.toLowerCase().includes(searchValue) ||
+                person.aadhaar.includes(searchValue) ||
+                person.mobile.includes(searchValue) ||
+                (person.suspectId && person.suspectId.toLowerCase().includes(searchValue))
+            );
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        <h3>No Results Found</h3>
+                        <p>Try searching with different criteria</p>
+                    </div>
+                `;
+            } else {
+                resultsContainer.innerHTML = results.map(person => createPersonCard(person)).join('');
+            }
+
+            resultCount.textContent = results.length;
+            resultsSection.classList.add('show');
+        }
+
+        function createPersonCard(person) {
+            const statusClass = person.status === 'suspect' ? 'suspect' : '';
+            const statusBadge = person.status === 'suspect' 
+                ? '<span class="status-badge status-suspect">⚠️ SUSPECT</span>'
+                : '<span class="status-badge status-clear">✓ Clear</span>';
+
+            const currentLocation = person.currentHotel 
+                ? `${person.currentHotel}, Room ${person.roomNumber}`
+                : 'Not Currently Checked In';
+
+            const timeline = person.timeline.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-hotel">${item.hotel}</div>
+                        <div class="timeline-date">${item.date} • ${item.status}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="person-card ${statusClass}">
+                    <div class="card-header">
+                        <div class="person-info">
+                            <div class="person-photo">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <div class="person-details">
+                                <h3>${person.name}</h3>
+                                <div class="person-meta">
+                                    <span class="meta-item">👤 ${person.age} years, ${person.gender}</span>
+                                    <span class="meta-item">📱 ${person.mobile}</span>
+                                    ${person.suspectId ? `<span class="meta-item">🆔 ${person.suspectId}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        ${statusBadge}
+                    </div>
+
+                    <div class="card-body">
+                        <div class="info-item">
+                            <span class="info-label">Current Location</span>
+                            <span class="info-value">${currentLocation}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Aadhaar Number</span>
+                            <span class="info-value">${person.aadhaar}</span>
+                        </div>
+                        ${person.checkIn ? `
+                        <div class="info-item">
+                            <span class="info-label">Check-in Time</span>
+                            <span class="info-value">${person.checkIn}</span>
+                        </div>
+                        ` : ''}
+                        ${person.offense ? `
+                        <div class="info-item">
+                            <span class="info-label">Offense</span>
+                            <span class="info-value">${person.offense}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="timeline-section">
+                        <div class="timeline-title">📍 Location History</div>
+                        ${timeline}
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="action-btn btn-view" onclick="viewFullDetails(${person.id})">View Full Details</button>
+                        <button class="action-btn btn-track" onclick="trackRealTime(${person.id})">📍 Track Real-time</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewFullDetails(id) {
+            alert(`Viewing full details for person ID: ${id}`);
+        }
+
+        function trackRealTime(id) {
+            alert(`Starting real-time tracking for person ID: ${id}`);
+        }
+
+        function exportResults() {
+            alert('Exporting search results to CSV...');
+        }
+
+        // Auto-search demo on page load
+        setTimeout(() => {
+            document.getElementById('searchValue').value = 'rajesh';
+            searchPerson(new Event('submit'));
+        }, 500);
+    </script>
+</body>
+</html>

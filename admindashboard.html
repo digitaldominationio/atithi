@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atithi - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 73px;
+            bottom: 0;
+            width: 260px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 2rem 0;
+            animation: slideRight 0.5s ease-out;
+            overflow-y: auto;
+        }
+
+        @keyframes slideRight {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .menu-item {
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: linear-gradient(90deg, rgba(30,60,114,0.1) 0%, transparent 100%);
+            color: #1e3c72;
+            border-left-color: #dc2626;
+        }
+
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            margin-top: 73px;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            color: #1e3c72;
+            margin-bottom: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid #1e3c72;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; border-left-color: #dc2626; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; border-left-color: #2563eb; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; border-left-color: #059669; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; border-left-color: #d97706; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; border-left-color: #7c3aed; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3c72 0%, #dc2626 100%);
+        }
+
+        .stat-icon svg {
+            width: 25px;
+            height: 25px;
+            fill: white;
+        }
+
+        .stat-title {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #059669;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.negative {
+            color: #dc2626;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        /* Chart Styles */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 100%;
+            padding: 20px 10px;
+            gap: 10px;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: growBar 1s ease-out;
+        }
+
+        @keyframes growBar {
+            from {
+                height: 0 !important;
+            }
+        }
+
+        .bar:hover {
+            background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+            transform: translateY(-5px);
+        }
+
+        .bar-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .pie-chart {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .pie-visual {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #1e3c72 0deg 126deg,
+                #2563eb 126deg 234deg,
+                #dc2626 234deg 306deg,
+                #d97706 306deg 360deg
+            );
+            position: relative;
+            animation: rotatePie 1s ease-out;
+        }
+
+        @keyframes rotatePie {
+            from {
+                transform: rotate(-90deg);
+            }
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.2rem;
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-text {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .legend-value {
+            font-weight: bold;
+            color: #1e3c72;
+            margin-left: auto;
+        }
+
+        /* Suspect Alert Popup */
+        .alert-popup {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(220, 38, 38, 0.3);
+            border-left: 5px solid #dc2626;
+            padding: 1.5rem;
+            z-index: 2000;
+            animation: slideInRight 0.5s ease-out;
+            display: none;
+        }
+
+        .alert-popup.show {
+            display: block;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .alert-popup-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #dc2626;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6c757d;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .alert-close:hover {
+            color: #dc2626;
+        }
+
+        .alert-popup-content {
+            color: #495057;
+        }
+
+        .alert-detail {
+            margin: 0.75rem 0;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .alert-detail-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-detail-value {
+            font-weight: 600;
+            color: #1e3c72;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .alert-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .alert-btn-primary {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+        }
+
+        .alert-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .alert-btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .alert-btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #dc2626;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            transition: background 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.alert {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+
+        .activity-icon.success {
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
+        }
+
+        .activity-icon.info {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #adb5bd;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Alert Badge */
+        .alert-badge {
+            background: #dc2626;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-section">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#1e3c72" d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    <circle fill="#dc2626" cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h2>ATITHI</h2>
+                <p>Commissionerate Police Dashboard</p>
+            </div>
+        </div>
+        <div class="user-profile">
+            <div class="profile-avatar">AP</div>
+            <button class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+   <div class="sidebar">
+    <div class="menu-item active">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+            </svg>
+        </div>
+        <span>Dashboard</span>
+    </div>
+
+    <a href="suspect.html" class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                         1.79-4 4 1.79 4 4 4zm0 2c-2.67 
+                         0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        </div>
+        <span>Add Suspect List</span>
+    </a>
+
+    <a href="trackperson.html" class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 
+                         5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 
+                         9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 
+                         2.5-2.5 2.5 1.12 2.5 2.5-1.12 
+                         2.5-2.5 2.5z"/>
+            </svg>
+        </div>
+        <span>Track Person</span>
+    </a>
+
+    <a href="totalhotels.html" class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 
+                         7 7s-3 1.34-3 3 1.34 3 
+                         3 3zm12-6h-8v7H3V7H1v10h22v-6c0-2.21-1.79-4-4-4z"/>
+            </svg>
+        </div>
+        <span>Total Hotels</span>
+    </a>
+
+    <div class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 
+                         1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        <span>Verification of Hotel</span>
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 3H5c-1.1 0-2 .9-2 
+                         2v14c0 1.1.9 2 2 
+                         2h14c1.1 0 2-.9 
+                         2-2V5c0-1.1-.9-2-2-2zM9 
+                         17H7v-7h2v7zm4 
+                         0h-2V7h2v10zm4 
+                         0h-2v-4h2v4z"/>
+            </svg>
+        </div>
+        <span>Reports</span>
+    </div>
+
+    <div class="menu-item">
+        <div class="menu-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 
+                         0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 
+                         2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 
+                         0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 
+                         0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 
+                         1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 
+                         1.58c-.18.14-.23.41-.12.61l1.92 
+                         3.32c.12.22.37.29.59.22l2.39-.96c.5.38 
+                         1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 
+                         0 .44-.17.47-.41l.36-2.54c.59-.24 
+                         1.13-.56 1.62-.94l2.39.96c.22.08.47 
+                         0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 
+                         15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 
+                         3.6-3.6 3.6 1.62 3.6 3.6-1.62 
+                         3.6-3.6 3.6z"/>
+            </svg>
+        </div>
+        <span>Settings</span>
+    </div>
+</div>
+
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Suspect Alert Popup -->
+        <div class="alert-popup" id="suspectAlert">
+            <div class="alert-popup-header">
+                <div class="alert-popup-title">
+                    <div class="pulse-dot"></div>
+                    <span>⚠️ SUSPECT DETECTED</span>
+                </div>
+                <button class="alert-close" onclick="closeAlert()">&times;</button>
+            </div>
+            <div class="alert-popup-content">
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Suspect Name</div>
+                    <div class="alert-detail-value">Rajesh Kumar Mishra</div>
+                </div>
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Suspect ID</div>
+                    <div class="alert-detail-value">SUS-2024-0923</div>
+                </div>
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Hotel Location</div>
+                    <div class="alert-detail-value">Hotel Presidency, Bhubaneswar</div>
+                </div>
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Room Number</div>
+                    <div class="alert-detail-value">Room 412</div>
+                </div>
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Check-in Time</div>
+                    <div class="alert-detail-value">Today, 2:45 PM</div>
+                </div>
+                <div class="alert-detail">
+                    <div class="alert-detail-label">Offense</div>
+                    <div class="alert-detail-value">Theft, Fraud (Case: FIR-2024-1156)</div>
+                </div>
+                <div class="alert-actions">
+                    <button class="alert-btn alert-btn-primary" onclick="viewDetails()">View Full Details</button>
+                    <button class="alert-btn alert-btn-secondary" onclick="closeAlert()">Dismiss</button>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="dashboard-title">Dashboard Overview</h1>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Total Hotels</div>
+                        <div class="stat-value">127</div>
+                        <div class="stat-change">↑ 8 new this month</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V7H1v10h22v-6c0-2.21-1.79-4-4-4z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Total Rooms</div>
+                        <div class="stat-value">3,452</div>
+                        <div class="stat-change">↑ 156 added</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 10.78V8c0-1.65-1.35-3-3-3h-4c-.77 0-1.47.3-2 .78-.53-.48-1.23-.78-2-.78H6C4.35 5 3 6.35 3 8v2.78c-.61.55-1 1.34-1 2.22v6h2v-2h16v2h2v-6c0-.88-.39-1.67-1-2.22zM14 7h4c.55 0 1 .45 1 1v2h-6V8c0-.55.45-1 1-1zM5 8c0-.55.45-1 1-1h4c.55 0 1 .45 1 1v2H5V8z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Total Check-ins (Today)</div>
+                        <div class="stat-value">284</div>
+                        <div class="stat-change">↑ 12% vs yesterday</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Total Check-outs (Today)</div>
+                        <div class="stat-value">196</div>
+                        <div class="stat-change">↓ 5% vs yesterday</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Foreign Guests (Current)</div>
+                        <div class="stat-value">89</div>
+                        <div class="stat-change">From 23 countries</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3 class="chart-title">Check-in Trends (Last 7 Days)</h3>
+                <div class="chart-placeholder">
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <div class="bar" style="height: 160px;">
+                                <div class="bar-value">245</div>
+                            </div>
+                            <div class="bar-label">Mon</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 190px;">
+                                <div class="bar-value">298</div>
+                            </div>
+                            <div class="bar-label">Tue</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 145px;">
+                                <div class="bar-value">223</div>
+                            </div>
+                            <div class="bar-label">Wed</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 175px;">
+                                <div class="bar-value">267</div>
+                            </div>
+                            <div class="bar-label">Thu</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 205px;">
+                                <div class="bar-value">312</div>
+                            </div>
+                            <div class="bar-label">Fri</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 220px;">
+                                <div class="bar-value">341</div>
+                            </div>
+                            <div class="bar-label">Sat</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar" style="height: 185px;">
+                                <div class="bar-value">284</div>
+                            </div>
+                            <div class="bar-label">Sun</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3 class="chart-title">Guest Distribution</h3>
+                <div class="chart-placeholder">
+                    <div class="pie-chart">
+                        <div class="pie-visual">
+                            <div class="pie-center">100%</div>
+                        </div>
+                        <div class="pie-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #1e3c72;"></div>
+                                <div class="legend-text">Domestic</div>
+                                <div class="legend-value">35%</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #2563eb;"></div>
+                                <div class="legend-text">Business</div>
+                                <div class="legend-value">30%</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #dc2626;"></div>
+                                <div class="legend-text">Foreign</div>
+                                <div class="legend-value">20%</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #d97706;"></div>
+                                <div class="legend-text">Tourism</div>
+                                <div class="legend-value">15%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+            <h3 class="chart-title">Recent Alerts & Activities</h3>
+            
+            <div class="activity-item">
+                <div class="activity-icon alert">⚠️</div>
+                <div class="activity-content">
+                    <div class="activity-title">Suspect Detected <span class="alert-badge">ALERT</span></div>
+                    <div class="activity-description">Match found at Hotel Grand Plaza, Room 305 - Person ID: SUS-2024-0891</div>
+                    <div class="activity-time">2 minutes ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon success">✓</div>
+                <div class="activity-content">
+                    <div class="activity-title">Hotel Verification Completed</div>
+                    <div class="activity-description">The Oberoi Bhubaneswar successfully verified and added to network</div>
+                    <div class="activity-time">15 minutes ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon info">ℹ️</div>
+                <div class="activity-content">
+                    <div class="activity-title">Bulk Check-in Processed</div>
+                    <div class="activity-description">42 guests checked in at Hotel Mayfair Convention - Tour group from Germany</div>
+                    <div class="activity-time">1 hour ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon alert">⚠️</div>
+                <div class="activity-content">
+                    <div class="activity-title">Suspect Detected <span class="alert-badge">ALERT</span></div>
+                    <div class="activity-description">Match found at Hotel Swosti Premium, Room 112 - Person ID: SUS-2024-0876</div>
+                    <div class="activity-time">3 hours ago</div>
+                </div>
+            </div>
+
+            <div class="activity-item">
+                <div class="activity-icon success">✓</div>
+                <div class="activity-content">
+                    <div class="activity-title">System Update Completed</div>
+                    <div class="activity-description">Database sync completed successfully - 1,247 records updated</div>
+                    <div class="activity-time">5 hours ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show suspect alert popup after 3 seconds
+        setTimeout(() => {
+            document.getElementById('suspectAlert').classList.add('show');
+            // Auto-play alert sound (optional)
+            playAlertSound();
+        }, 3000);
+
+        function closeAlert() {
+            document.getElementById('suspectAlert').classList.remove('show');
+        }
+
+        function viewDetails() {
+            alert('Redirecting to suspect details page...');
+            closeAlert();
+        }
+
+        function playAlertSound() {
+            // Create a simple beep sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Add interactivity for menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Animate numbers on load
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Animate stat values on page load
+        window.addEventListener('load', () => {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach((stat, index) => {
+                const value = parseInt(stat.textContent.replace(/,/g, ''));
+                stat.textContent = '0';
+                setTimeout(() => {
+                    animateValue(stat, 0, value, 1000);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
