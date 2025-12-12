@@ -464,15 +464,7 @@
                         <option value="pending">Pending Verification</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label>⭐ Rating</label>
-                    <select onchange="filterHotels()">
-                        <option value="">All Ratings</option>
-                        <option value="5">5 Star</option>
-                        <option value="4">4 Star</option>
-                        <option value="3">3 Star</option>
-                    </select>
-                </div>
+               
             </div>
         </div>
 
@@ -591,9 +583,8 @@
         }
 
         function createHotelCard(hotel) {
-            const stars = '⭐'.repeat(hotel.rating);
-            const statusClass = hotel.status === 'verified' ? 'status-verified' : 'status-pending';
-            const statusText = hotel.status === 'verified' ? '✓ Verified' : '⏳ Pending';
+    const statusClass = hotel.status === 'verified' ? 'status-verified' : 'status-pending';
+    const statusText = hotel.status === 'verified' ? '✓ Verified' : '⏳ Pending';
 
             return `
                 <div class="hotel-card" onclick="viewHotelDetails(${hotel.id})">
@@ -610,8 +601,6 @@
                             <span>${hotel.location}</span>
                         </div>
                         <div class="hotel-rating">
-                            <span class="stars">${stars}</span>
-                            <span class="rating-text">${hotel.rating} Star Hotel</span>
                         </div>
                         <div class="hotel-stats">
                             <div class="hotel-stat">
