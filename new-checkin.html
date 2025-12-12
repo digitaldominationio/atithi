@@ -1,347 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Check-in | Sarai 2.0</title>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      background: #f8fafc;
-      color: #263238;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Check-in | Sarai 2.0</title>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        background: #f8fafc;
+        color: #263238;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-    header {
-      background: linear-gradient(135deg, #64b5f6, #ba68c8, #f06292);
-      color: white;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
+      header {
+        background: linear-gradient(135deg, #64b5f6, #ba68c8, #f06292);
+        color: white;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
 
-    header h1 { font-size: 20px; margin: 0; }
-    header a { color: white; text-decoration: none; font-weight: bold; }
+      header h1 {
+        font-size: 20px;
+        margin: 0;
+      }
+      header a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
 
-    main {
-      display: flex;
-      flex: 1;
-      padding: 20px;
-      gap: 24px;
-    }
+      main {
+        display: flex;
+        flex: 1;
+        padding: 20px;
+        gap: 24px;
+      }
 
-    /* Left section */
-    .left-section {
-      flex: 2;
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 24px;
-      transition: all 0.3s ease;
-    }
+      /* Left section */
+      .left-section {
+        flex: 2;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        transition: all 0.3s ease;
+      }
 
-    .right-section {
-      flex: 1.2;
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 24px;
-      overflow-y: auto;
-      max-height: calc(100vh - 150px);
-    }
+      .right-section {
+        flex: 1.2;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        overflow-y: auto;
+        max-height: calc(100vh - 150px);
+      }
 
-    h2 {
-      margin-bottom: 16px;
-      font-size: 18px;
-      color: #263238;
-    }
+      h2 {
+        margin-bottom: 16px;
+        font-size: 18px;
+        color: #263238;
+      }
 
-    .rooms-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-      gap: 12px;
-    }
+      .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 12px;
+      }
 
-    .room-card {
-      padding: 20px;
-      background: #f1f8e9;
-      border: 2px solid transparent;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+      .room-card {
+        padding: 20px;
+        background: #f1f8e9;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+      }
 
-    .room-card:hover {
-      background: #dcedc8;
-    }
+      .room-card:hover {
+        background: #dcedc8;
+      }
 
-    .room-card.selected {
-      border-color: #64b5f6;
-      background: #e3f2fd;
-    }
+      .room-card.selected {
+        border-color: #64b5f6;
+        background: #e3f2fd;
+      }
 
-    .add-member-btn, .final-submit-btn {
-      display: inline-block;
-      margin-top: 16px;
-      background: linear-gradient(135deg,#64b5f6,#ba68c8,#f06292);
-      color: white;
-      padding: 12px 18px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+      .add-member-btn,
+      .final-submit-btn {
+        display: inline-block;
+        margin-top: 16px;
+        background: linear-gradient(135deg, #64b5f6, #ba68c8, #f06292);
+        color: white;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
 
-    .add-member-btn:hover, .final-submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
-    }
+      .add-member-btn:hover,
+      .final-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
 
-    .member-list {
-      margin-top: 10px;
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
+      .member-list {
+        margin-top: 10px;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
 
-    .member-card {
-      background: #fafafa;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
+      .member-card {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
 
-    /* Popup modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
+      /* Popup modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
 
-    .modal.active { display: flex; }
+      .modal.active {
+        display: flex;
+      }
 
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      width: 90%;
-      max-width: 420px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        width: 90%;
+        max-width: 420px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      }
 
-    .modal-content h3 { margin-bottom: 16px; }
+      .modal-content h3 {
+        margin-bottom: 16px;
+      }
 
-    .modal-content label {
-      font-weight: 600;
-      display: block;
-      margin-top: 8px;
-    }
+      .modal-content label {
+        font-weight: 600;
+        display: block;
+        margin-top: 8px;
+      }
 
-    .modal-content input, .modal-content select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-top: 4px;
-    }
+      .modal-content input,
+      .modal-content select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-top: 4px;
+      }
 
-    .modal-actions {
-      margin-top: 16px;
-      text-align: right;
-    }
+      .modal-actions {
+        margin-top: 16px;
+        text-align: right;
+      }
 
-    .capture-btn {
-      background: #64b5f6;
-      border: none;
-      color: white;
-      padding: 10px 12px;
-      border-radius: 8px;
-      margin-top: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+      .capture-btn {
+        background: #64b5f6;
+        border: none;
+        color: white;
+        padding: 10px 12px;
+        border-radius: 8px;
+        margin-top: 6px;
+        cursor: pointer;
+        font-weight: 600;
+      }
 
-    .hidden { display: none !important; }
+      .hidden {
+        display: none !important;
+      }
 
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-      main { flex-direction: column; padding: 12px; }
-      .right-section { order: -1; max-height: none; }
-      header h1 { font-size: 18px; }
-    }
-  </style>
-</head>
-<body>
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        main {
+          flex-direction: column;
+          padding: 12px;
+        }
+        .right-section {
+          order: -1;
+          max-height: none;
+        }
+        header h1 {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="dashboard2.html">← Back</a>
+      <h1>New Check-in</h1>
+    </header>
 
-<header>
-  <a href="dashboard2.html">← Back</a>
-  <h1>New Check-in</h1>
-</header>
+    <main>
+      <!-- Left section: Select Room & Add Members -->
+      <div class="left-section" id="leftSection">
+        <div id="roomSelection">
+          <h2>Select Room</h2>
+          <div class="rooms-grid" id="roomsGrid"></div>
+        </div>
 
-<main>
-  <!-- Left section: Select Room & Add Members -->
-  <div class="left-section" id="leftSection">
-    <div id="roomSelection">
-      <h2>Select Room</h2>
-      <div class="rooms-grid" id="roomsGrid"></div>
+        <div id="addMemberSection" class="hidden">
+          <h2>Add Members</h2>
+          <button class="add-member-btn" id="addMemberBtn">Add Member</button>
+        </div>
+      </div>
+
+      <!-- Right section: Member preview -->
+      <div class="right-section">
+        <h2>Check-in Summary</h2>
+        <div id="summaryList"></div>
+        <button class="final-submit-btn hidden" id="finalSubmitBtn">
+          Submit Check-in
+        </button>
+      </div>
+    </main>
+
+    <!-- Member Add Modal -->
+    <div class="modal" id="memberModal">
+      <div class="modal-content">
+        <h3>Add Member Details</h3>
+        <label>Capture ID Card</label>
+        <button class="capture-btn">📷 Capture ID</button>
+
+        <label>ID Card Type</label>
+        <select id="idType">
+          <option value="Aadhar">Aadhar</option>
+          <option value="Passport">Passport</option>
+          <option value="Driving License">Driving License</option>
+        </select>
+
+        <label>Full Name</label>
+        <input type="text" id="memberName" placeholder="Enter full name" />
+
+        <label>ID Number</label>
+        <input type="text" id="idNumber" placeholder="Enter ID number" />
+
+        <label>Mobile Number</label>
+        <input type="tel" id="mobile" placeholder="Enter mobile number" />
+
+        <label>Address</label>
+        <input type="text" id="address" placeholder="Enter full address" />
+
+        <label>Capture Photo</label>
+        <button class="capture-btn">📷 Capture Photo</button>
+
+        <div class="modal-actions">
+          <button class="capture-btn" id="saveMember">Save</button>
+          <button
+            class="capture-btn"
+            style="background: #f06292"
+            id="closeModal"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div id="addMemberSection" class="hidden">
-      <h2>Add Members</h2>
-      <button class="add-member-btn" id="addMemberBtn">Add Member</button>
-    </div>
-  </div>
+    <script>
+      const roomsGrid = document.getElementById("roomsGrid");
+      const addMemberSection = document.getElementById("addMemberSection");
+      const addMemberBtn = document.getElementById("addMemberBtn");
+      const summaryList = document.getElementById("summaryList");
+      const finalSubmitBtn = document.getElementById("finalSubmitBtn");
+      const memberModal = document.getElementById("memberModal");
+      const saveMember = document.getElementById("saveMember");
+      const closeModal = document.getElementById("closeModal");
 
-  <!-- Right section: Member preview -->
-  <div class="right-section">
-    <h2>Check-in Summary</h2>
-    <div id="summaryList"></div>
-    <button class="final-submit-btn hidden" id="finalSubmitBtn">Submit Check-in</button>
-  </div>
-</main>
+      const idType = document.getElementById("idType");
+      const memberName = document.getElementById("memberName");
+      const idNumber = document.getElementById("idNumber");
+      const mobile = document.getElementById("mobile");
+      const address = document.getElementById("address");
 
-<!-- Member Add Modal -->
-<div class="modal" id="memberModal">
-  <div class="modal-content">
-    <h3>Add Member Details</h3>
-    <label>Capture ID Card</label>
-    <button class="capture-btn">📷 Capture ID</button>
+      const roomSelection = document.getElementById("roomSelection");
+      const leftSection = document.getElementById("leftSection");
 
-    <label>ID Card Type</label>
-    <select id="idType">
-      <option value="Aadhar">Aadhar</option>
-      <option value="Passport">Passport</option>
-      <option value="Driving License">Driving License</option>
-    </select>
+      let selectedRoom = null;
+      let members = [];
 
-    <label>Full Name</label>
-    <input type="text" id="memberName" placeholder="Enter full name" />
+      // Generate room cards dynamically
+      const roomNumbers = Array.from({ length: 10 }, (_, i) => 101 + i);
+      roomNumbers.forEach((num) => {
+        const div = document.createElement("div");
+        div.className = "room-card";
+        div.textContent = `Room ${num}`;
+        div.addEventListener("click", () => selectRoom(div, num));
+        roomsGrid.appendChild(div);
+      });
 
-    <label>ID Number</label>
-    <input type="text" id="idNumber" placeholder="Enter ID number" />
+      function selectRoom(element, num) {
+        document
+          .querySelectorAll(".room-card")
+          .forEach((c) => c.classList.remove("selected"));
+        element.classList.add("selected");
+        selectedRoom = num;
 
-    <label>Mobile Number</label>
-    <input type="tel" id="mobile" placeholder="Enter mobile number" />
+        // Hide room selection, show member section
+        roomSelection.classList.add("hidden");
+        addMemberSection.classList.remove("hidden");
 
-    <label>Capture Photo</label>
-    <button class="capture-btn">📷 Capture Photo</button>
+        // On mobile, scroll to add member
+        if (window.innerWidth <= 768) {
+          setTimeout(
+            () => addMemberSection.scrollIntoView({ behavior: "smooth" }),
+            300
+          );
+        }
+      }
 
-    <div class="modal-actions">
-      <button class="capture-btn" id="saveMember">Save</button>
-      <button class="capture-btn" style="background:#f06292;" id="closeModal">Cancel</button>
-    </div>
-  </div>
-</div>
+      addMemberBtn.addEventListener("click", () => {
+        memberModal.classList.add("active");
+      });
 
-<script>
-  const roomsGrid = document.getElementById('roomsGrid');
-  const addMemberSection = document.getElementById('addMemberSection');
-  const addMemberBtn = document.getElementById('addMemberBtn');
-  const summaryList = document.getElementById('summaryList');
-  const finalSubmitBtn = document.getElementById('finalSubmitBtn');
-  const memberModal = document.getElementById('memberModal');
-  const saveMember = document.getElementById('saveMember');
-  const closeModal = document.getElementById('closeModal');
+      closeModal.addEventListener("click", () => {
+        memberModal.classList.remove("active");
+      });
 
-  const idType = document.getElementById('idType');
-  const memberName = document.getElementById('memberName');
-  const idNumber = document.getElementById('idNumber');
-  const mobile = document.getElementById('mobile');
+      saveMember.addEventListener("click", () => {
+        const member = {
+          idType: idType.value,
+          name: memberName.value.trim(),
+          idNumber: idNumber.value.trim(),
+          mobile: mobile.value.trim(),
+          address: address.value.trim(),
+        };
 
-  const roomSelection = document.getElementById('roomSelection');
-  const leftSection = document.getElementById('leftSection');
+        if (!member.name || !member.idNumber || !member.mobile) {
+          alert("Please fill all details");
+          return;
+        }
 
-  let selectedRoom = null;
-  let members = [];
+        members.push(member);
+        updateSummary();
+        memberModal.classList.remove("active");
+        memberName.value = idNumber.value = mobile.value = address.value = "";
+       });
 
-  // Generate room cards dynamically
-  const roomNumbers = Array.from({length: 10}, (_, i) => 101 + i);
-  roomNumbers.forEach(num => {
-    const div = document.createElement('div');
-    div.className = 'room-card';
-    div.textContent = `Room ${num}`;
-    div.addEventListener('click', () => selectRoom(div, num));
-    roomsGrid.appendChild(div);
-  });
-
-  function selectRoom(element, num) {
-    document.querySelectorAll('.room-card').forEach(c => c.classList.remove('selected'));
-    element.classList.add('selected');
-    selectedRoom = num;
-
-    // Hide room selection, show member section
-    roomSelection.classList.add('hidden');
-    addMemberSection.classList.remove('hidden');
-
-    // On mobile, scroll to add member
-    if (window.innerWidth <= 768) {
-      setTimeout(() => addMemberSection.scrollIntoView({ behavior: 'smooth' }), 300);
-    }
-  }
-
-  addMemberBtn.addEventListener('click', () => {
-    memberModal.classList.add('active');
-  });
-
-  closeModal.addEventListener('click', () => {
-    memberModal.classList.remove('active');
-  });
-
-  saveMember.addEventListener('click', () => {
-    const member = {
-      idType: idType.value,
-      name: memberName.value.trim(),
-      idNumber: idNumber.value.trim(),
-      mobile: mobile.value.trim()
-    };
-
-    if (!member.name || !member.idNumber || !member.mobile) {
-      alert('Please fill all details');
-      return;
-    }
-
-    members.push(member);
-    updateSummary();
-    memberModal.classList.remove('active');
-    memberName.value = idNumber.value = mobile.value = '';
-  });
-
-  function updateSummary() {
-    summaryList.innerHTML = `
+      function updateSummary() {
+        summaryList.innerHTML = `
       <p><strong>Room:</strong> ${selectedRoom}</p>
       <div class="member-list">
-        ${members.map((m,i)=>`
+        ${members
+          .map(
+            (m, i) => `
           <div class="member-card">
-            <p><strong>Member ${i+1}:</strong> ${m.name}</p>
+            <p><strong>Member ${i + 1}:</strong> ${m.name}</p>
             <p>ID: ${m.idType} (${m.idNumber})</p>
             <p>Mobile: ${m.mobile}</p>
+            <p>Address: ${m.address}</p>
           </div>
-        `).join('')}
+        `
+          )
+          .join("")}
       </div>
     `;
-    if (members.length > 0) finalSubmitBtn.classList.remove('hidden');
-  }
+        if (members.length > 0) finalSubmitBtn.classList.remove("hidden");
+      }
 
-  finalSubmitBtn.addEventListener('click', () => {
-    alert(`Check-in submitted for Room ${selectedRoom} with ${members.length} members.`);
-    window.location.href = 'dashboard2.html';
-  });
-</script>
-
-</body>
+      finalSubmitBtn.addEventListener("click", () => {
+        alert(
+          `Check-in submitted for Room ${selectedRoom} with ${members.length} members.`
+        );
+        window.location.href = "dashboard2.html";
+      });
+    </script>
+  </body>
 </html>

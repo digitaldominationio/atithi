@@ -174,16 +174,25 @@
         </div>
 
         <nav class="sidebar-nav" aria-label="Main navigation">
-            <a href="#" class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span> Dashboard</a>
-            <a href="#" class="nav-item" data-page="rooms"><span class="nav-item-icon">🛏️</span> Room Available</a>
-            <a href="#" class="nav-item" data-page="checkins"><span class="nav-item-icon">✅</span> Check-ins</a>
-            <a href="#" class="nav-item" data-page="checkouts"><span class="nav-item-icon">🚪</span> Check-outs</a>
-            <a href="#" class="nav-item" data-page="pax"><span class="nav-item-icon">🧾</span> Total Pax</a>
-            <a href="#" class="nav-item" data-page="new-checkin"><span class="nav-item-icon">➕</span> New Check-in</a>
-            <a href="#" class="nav-item" data-page="reports"><span class="nav-item-icon">📈</span> Reports</a>
-            <a href="#" class="nav-item" data-page="settings"><span class="nav-item-icon">⚙️</span> Settings</a>
-            <a href="#" class="nav-item" data-page="logout"><span class="nav-item-icon">🚪</span> Logout</a>
-        </nav>
+    <a href="dashboard2.html" class="nav-item"><span class="nav-item-icon">📊</span> Dashboard</a>
+
+    <a href="rooms.html" class="nav-item"><span class="nav-item-icon">🛏️</span> Room Available</a>
+
+    <a href="checkins.html" class="nav-item"><span class="nav-item-icon">✅</span> Check-ins</a>
+
+    <a href="checkouts.html" class="nav-item"><span class="nav-item-icon">🚪</span> Check-outs</a>
+
+    <a href="pax.html" class="nav-item"><span class="nav-item-icon">🧾</span> Total Pax</a>
+
+    <a href="new-checkin.html" class="nav-item"><span class="nav-item-icon">➕</span> New Check-in</a>
+
+    <a href="reports.html" class="nav-item"><span class="nav-item-icon">📈</span> Reports</a>
+
+    <a href="settings.html" class="nav-item"><span class="nav-item-icon">⚙️</span> Settings</a>
+
+    <a href="login2.html" class="nav-item"><span class="nav-item-icon">🚪</span> Logout</a>
+</nav>
+
     </aside>
 
     <!-- Sidebar overlay for mobile -->
@@ -359,16 +368,23 @@
 
         // Navigation item click (desktop sidebar)
         navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                navItems.forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
-                // close sidebar on mobile
-                if (window.innerWidth <= 768) closeSidebar();
-                // navigation logic placeholder
-                console.log('Navigate to', item.dataset.page);
-            });
-        });
+    item.addEventListener('click', (e) => {
+        // Allow real page navigation
+        const goTo = item.getAttribute("href");
+
+        if (goTo && goTo !== "#") {
+            window.location.href = goTo;
+            return;
+        }
+
+        // Only for items with no page (if any)
+        navItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
+        if (window.innerWidth <= 768) closeSidebar();
+    });
+});
+
 
         // Bottom nav click handling (mobile)
         bottomButtons.forEach(btn => {

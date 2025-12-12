@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Check-outs | Sarai 2.0</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Inter,system-ui;
+    background:linear-gradient(135deg,#e3f2fd,#f3e5f5);
+    color:#263238;
+    min-height:100vh;
+  }
+  
+  /* ---- Sidebar main container ---- */
+  .sidebar{
+    position:fixed;left:0;top:0;height:100vh;width:280px;
+    background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+    box-shadow:4px 0 20px rgba(0,0,0,.08);z-index:1000;overflow-y:auto;
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar.hidden{transform:translateX(-100%)}
+
+  /* ---- Sidebar header ---- */
+  .sidebar-header{
+    padding:28px 22px;
+    background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+    color:#fff;text-align:center;
+    border-bottom-left-radius:12px;
+    border-bottom-right-radius:12px;
+  }
+  .sidebar-logo{
+    width:64px;height:64px;margin:0 auto 10px;border-radius:50%;
+    background:#fff;color:#37474f;display:flex;
+    align-items:center;justify-content:center;font-weight:800;
+    font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.12)
+  }
+  .sidebar-header h2{font-size:20px;letter-spacing:.8px}
+  .sidebar-header p{font-size:12px;opacity:.95}
+
+  /* ---- Sidebar links ---- */
+  .sidebar-nav{padding:18px 0}
+  .nav-item{
+    display:flex;align-items:center;padding:14px 20px;
+    color:#546e7a;text-decoration:none;border-left:4px solid transparent;
+    font-weight:600;font-size:15px;transition:all .18s ease;
+    border-radius:10px;margin:6px 12px;
+  }
+  .nav-item:hover{
+    background:linear-gradient(90deg,rgba(100,181,246,.06),transparent);
+    color:#0b6fb0;border-left-color:#64b5f6;
+  }
+  .nav-item.active{
+    background:linear-gradient(90deg,rgba(100,181,246,.1),transparent);
+    border-left-color:#64b5f6;color:#0b6fb0;
+  }
+  .nav-item-icon{
+    width:36px;text-align:center;margin-right:12px;font-size:18px;
+  }
+
+  .main-content{margin-left:280px;padding:28px}
+  
+  /* Top Bar */
+  .top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:24px;
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .top-bar::before{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    width:200px;
+    height:200px;
+    background:linear-gradient(135deg,rgba(100,181,246,.08),rgba(240,98,146,.08));
+    border-radius:50%;
+    transform:translate(50px,-50px);
+  }
+  .page-title{
+    font-size:28px;
+    font-weight:800;
+    background:linear-gradient(135deg,#64b5f6,#ba68c8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:4px;
+  }
+  .page-subtitle{
+    color:#607d8b;
+    font-size:14px;
+    font-weight:500;
+  }
+  .date-badge{
+    background:linear-gradient(135deg,#64b5f6,#ba68c8);
+    color:#fff;
+    padding:10px 20px;
+    border-radius:24px;
+    font-weight:700;
+    font-size:14px;
+    box-shadow:0 4px 12px rgba(100,181,246,.3);
+    position:relative;
+    z-index:1;
+  }
+  
+  /* Stats Cards */
+  .stats-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:24px;
+  }
+  .stat-card{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,.06);
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:4px;
+    height:100%;
+  }
+  .stat-card.today::before{background:linear-gradient(180deg,#f06292,#e91e63)}
+  .stat-card.revenue::before{background:linear-gradient(180deg,#66bb6a,#43a047)}
+  .stat-card.pending::before{background:linear-gradient(180deg,#ffa726,#fb8c00)}
+  .stat-label{
+    font-size:13px;
+    color:#607d8b;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:8px;
+  }
+  .stat-value{
+    font-size:32px;
+    font-weight:900;
+    color:#263238;
+  }
+  .stat-icon{
+    position:absolute;
+    top:16px;
+    right:16px;
+    font-size:32px;
+    opacity:.15;
+  }
+  
+  /* Filter Bar */
+  .filter-bar{
+    background:#fff;
+    padding:18px 20px;
+    border-radius:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,.06);
+    margin-bottom:20px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .filter-label{
+    font-size:14px;
+    font-weight:700;
+    color:#546e7a;
+  }
+  .filter-btn{
+    padding:8px 18px;
+    border:2px solid #e0e0e0;
+    background:#fff;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    color:#546e7a;
+    transition:all .2s ease;
+  }
+  .filter-btn:hover{
+    border-color:#64b5f6;
+    color:#64b5f6;
+  }
+  .filter-btn.active{
+    background:linear-gradient(135deg,#64b5f6,#ba68c8);
+    border-color:transparent;
+    color:#fff;
+    box-shadow:0 4px 12px rgba(100,181,246,.3);
+  }
+  
+  /* Table Container */
+  .table-container{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.06);
+    overflow:hidden;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+  }
+  thead{
+    background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+    color:#fff;
+  }
+  th{
+    padding:16px 18px;
+    text-align:left;
+    font-weight:700;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  td{
+    padding:16px 18px;
+    border-bottom:1px solid #f5f5f5;
+    font-size:14px;
+  }
+  tr{
+    transition:background-color .2s ease;
+  }
+  tbody tr:hover{
+    background:rgba(100,181,246,.03);
+  }
+  .guest-name{
+    font-weight:700;
+    color:#1e3c72;
+    font-size:15px;
+  }
+  .room-number{
+    font-weight:700;
+    color:#64b5f6;
+    font-size:15px;
+  }
+  .bill-amount{
+    font-weight:800;
+    color:#2e7d32;
+    font-size:16px;
+  }
+  .stay-duration{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:#607d8b;
+  }
+  
+  /* Status Pills */
+  .status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 14px;
+    border-radius:16px;
+    font-weight:700;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .status-ready{
+    background:rgba(102,187,106,.15);
+    color:#2e7d32;
+  }
+  .status-processing{
+    background:rgba(255,167,38,.15);
+    color:#e65100;
+  }
+  .status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+  }
+  .status-ready .status-dot{
+    background:#66bb6a;
+    box-shadow:0 0 8px rgba(102,187,106,.6);
+  }
+  .status-processing .status-dot{
+    background:#ffa726;
+    box-shadow:0 0 8px rgba(255,167,38,.6);
+  }
+  
+  /* Action Buttons */
+  .action-buttons{
+    display:flex;
+    gap:8px;
+  }
+  .btn{
+    padding:8px 16px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    transition:all .2s ease;
+  }
+  .btn-process{
+    background:linear-gradient(135deg,#66bb6a,#43a047);
+    color:#fff;
+    box-shadow:0 4px 12px rgba(102,187,106,.3);
+  }
+  .btn-process:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(102,187,106,.4);
+  }
+  .btn-view{
+    background:#fff;
+    color:#64b5f6;
+    border:2px solid #64b5f6;
+  }
+  .btn-view:hover{
+    background:#64b5f6;
+    color:#fff;
+  }
+  
+  /* Empty State */
+  .empty-state{
+    text-align:center;
+    padding:60px 20px;
+    color:#90a4ae;
+  }
+  .empty-state-icon{
+    font-size:64px;
+    margin-bottom:16px;
+    opacity:.3;
+  }
+  
+  /* Modal */
+  .modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    z-index:2000;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .modal.show{
+    display:flex;
+  }
+  .modal-content{
+    background:#fff;
+    border-radius:16px;
+    padding:32px;
+    max-width:500px;
+    width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    position:relative;
+  }
+  .modal-header{
+    font-size:24px;
+    font-weight:800;
+    color:#263238;
+    margin-bottom:20px;
+  }
+  .modal-body{
+    margin-bottom:24px;
+  }
+  .modal-row{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid #f5f5f5;
+  }
+  .modal-label{
+    color:#607d8b;
+    font-weight:600;
+  }
+  .modal-value{
+    font-weight:700;
+    color:#263238;
+  }
+  .modal-actions{
+    display:flex;
+    gap:12px;
+  }
+  .modal-btn{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    font-weight:700;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .modal-btn.confirm{
+    background:linear-gradient(135deg,#66bb6a,#43a047);
+    color:#fff;
+  }
+  .modal-btn.cancel{
+    background:#f5f5f5;
+    color:#546e7a;
+  }
+  .modal-btn:hover{
+    transform:translateY(-2px);
+  }
+  
+  /* Mobile Responsive */
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%);position:fixed;z-index:1100}
+    .sidebar.active{transform:translateX(0)}
+    .main-content{margin-left:0;padding:18px}
+    .top-bar{flex-direction:column;align-items:flex-start;gap:16px}
+    .stats-row{grid-template-columns:1fr}
+    .table-container{overflow-x:auto}
+    table{min-width:800px}
+    .action-buttons{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">🏨</div>
+        <h2>Sarai 2.0</h2>
+        <p>Hotel Management</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard2.html" class="nav-item">
+            <span class="nav-item-icon">📊</span>
+            Dashboard
+        </a>
+
+        <a href="rooms.html" class="nav-item">
+            <span class="nav-item-icon">🛏️</span>
+            Room Available
+        </a>
+
+        <a href="checkins.html" class="nav-item">
+            <span class="nav-item-icon">✅</span>
+            Check-ins
+        </a>
+
+        <a href="checkouts.html" class="nav-item active">
+            <span class="nav-item-icon">🚪</span>
+            Check-outs
+        </a>
+
+        <a href="pax.html" class="nav-item">
+            <span class="nav-item-icon">🧾</span>
+            Total Pax
+        </a>
+
+        <a href="new-checkin.html" class="nav-item">
+            <span class="nav-item-icon">➕</span>
+            New Check-in
+        </a>
+
+        <a href="reports.html" class="nav-item">
+            <span class="nav-item-icon">📈</span>
+            Reports
+        </a>
+
+        <a href="settings.html" class="nav-item">
+            <span class="nav-item-icon">⚙️</span>
+            Settings
+        </a>
+
+        <a href="login2.html" class="nav-item">
+            <span class="nav-item-icon">🚪</span>
+            Logout
+        </a>
+    </nav>
+</aside>
+
+<main class="main-content">
+  <div class="top-bar">
+    <div>
+      <h1 class="page-title">Check-outs</h1>
+      <p class="page-subtitle">Process departures and generate receipts</p>
+    </div>
+    <div class="date-badge" id="dateDisplay"></div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card today">
+      <div class="stat-label">Due Today</div>
+      <div class="stat-value" id="todayCount">0</div>
+      <div class="stat-icon">📅</div>
+    </div>
+    <div class="stat-card revenue">
+      <div class="stat-label">Expected Revenue</div>
+      <div class="stat-value" id="revenueAmount">₹0</div>
+      <div class="stat-icon">💰</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-label">Pending Bills</div>
+      <div class="stat-value" id="pendingCount">0</div>
+      <div class="stat-icon">⏱</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">View:</span>
+    <button class="filter-btn active" data-filter="all">All Check-outs</button>
+    <button class="filter-btn" data-filter="today">Due Today</button>
+    <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+  </div>
+
+  <section>
+    <div class="table-container">
+      <table aria-label="Checkout list">
+        <thead>
+          <tr>
+            <th>Guest Name</th>
+            <th>Room</th>
+            <th>Check-out Date</th>
+            <th>Stay Duration</th>
+            <th>Bill Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="checkoutBody"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- Checkout Confirmation Modal -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-content">
+    <div class="modal-header">Process Check-out</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmCheckout()">Confirm & Process</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Enhanced checkout data
+  const checkoutData = [
+    {name:'Anita Das',room:'205',checkout:'2025-12-12',stay:'2 nights',bill:4200,status:'ready',checkin:'2025-12-10'},
+    {name:'Vikas Patel',room:'410',checkout:'2025-12-12',stay:'1 night',bill:2100,status:'ready',checkin:'2025-12-11'},
+    {name:'Priya Sharma',room:'108',checkout:'2025-12-13',stay:'3 nights',bill:6300,status:'ready',checkin:'2025-12-10'},
+    {name:'Amit Kumar',room:'502',checkout:'2025-12-13',stay:'4 nights',bill:8400,status:'processing',checkin:'2025-12-09'},
+    {name:'Sneha Reddy',room:'203',checkout:'2025-12-14',stay:'2 nights',bill:4200,status:'ready',checkin:'2025-12-12'},
+    {name:'Rajesh Verma',room:'315',checkout:'2025-12-14',stay:'1 night',bill:2100,status:'ready',checkin:'2025-12-13'},
+    {name:'Kavita Joshi',room:'407',checkout:'2025-12-12',stay:'3 nights',bill:6300,status:'ready',checkin:'2025-12-09'}
+  ];
+
+  let currentFilter = 'all';
+  let selectedGuest = null;
+
+  // Update date display
+  document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
+  // Calculate stats
+  const todayCheckouts = checkoutData.filter(d => d.checkout === '2025-12-12').length;
+  const totalRevenue = checkoutData.reduce((sum, d) => sum + d.bill, 0);
+  const pendingBills = checkoutData.filter(d => d.status === 'processing').length;
+
+  // Animate stats
+  function animateValue(el, end, duration = 1000, prefix = '', suffix = '') {
+    let start = 0;
+    const increment = end / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= end) {
+        el.textContent = prefix + Math.round(end).toLocaleString() + suffix;
+        clearInterval(timer);
+      } else {
+        el.textContent = prefix + Math.round(current).toLocaleString() + suffix;
+      }
+    }, 16);
+  }
+
+  animateValue(document.getElementById('todayCount'), todayCheckouts);
+  animateValue(document.getElementById('revenueAmount'), totalRevenue, 1000, '₹');
+  animateValue(document.getElementById('pendingCount'), pendingBills);
+
+  // Render table
+  function renderTable(filter = 'all') {
+    const tbody = document.getElementById('checkoutBody');
+    tbody.innerHTML = '';
+    
+    let filtered = checkoutData;
+    if (filter === 'today') {
+      filtered = checkoutData.filter(d => d.checkout === '2025-12-12');
+    } else if (filter === 'upcoming') {
+      filtered = checkoutData.filter(d => d.checkout > '2025-12-12');
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-state">
+        <div class="empty-state-icon">🏖️</div>
+        <div>No check-outs scheduled</div>
+      </td></tr>`;
+      return;
+    }
+
+    filtered.forEach(d => {
+      const tr = document.createElement('tr');
+      const isToday = d.checkout === '2025-12-12';
+      tr.innerHTML = `
+        <td class="guest-name">${d.name}</td>
+        <td class="room-number">${d.room}</td>
+        <td>${isToday ? '<strong>Today</strong>' : d.checkout}</td>
+        <td class="stay-duration">
+          <span>🕐</span> ${d.stay}
+        </td>
+        <td class="bill-amount">₹ ${d.bill.toLocaleString()}</td>
+        <td>
+          <span class="status-pill ${d.status === 'ready' ? 'status-ready' : 'status-processing'}">
+            <span class="status-dot"></span>
+            ${d.status === 'ready' ? 'Ready' : 'Processing'}
+          </span>
+        </td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn btn-view" onclick="viewDetails('${d.name}')">View</button>
+            <button class="btn btn-process" onclick="processCheckout('${d.name}')">Process</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Filter functionality
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderTable(currentFilter);
+    });
+  });
+
+  function viewDetails(name) {
+    const guest = checkoutData.find(d => d.name === name);
+    alert(`Guest Details\n\nName: ${guest.name}\nRoom: ${guest.room}\nCheck-in: ${guest.checkin}\nCheck-out: ${guest.checkout}\nStay: ${guest.stay}\nBill: ₹${guest.bill.toLocaleString()}\n\nThis would open a detailed view with:\n• Complete billing breakdown\n• Payment history\n• Services used\n• Guest information`);
+  }
+
+  function processCheckout(name) {
+    selectedGuest = checkoutData.find(d => d.name === name);
+    const modalBody = document.getElementById('modalBody');
+    modalBody.innerHTML = `
+      <div class="modal-row">
+        <span class="modal-label">Guest Name:</span>
+        <span class="modal-value">${selectedGuest.name}</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Room Number:</span>
+        <span class="modal-value">${selectedGuest.room}</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Check-in Date:</span>
+        <span class="modal-value">${selectedGuest.checkin}</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Check-out Date:</span>
+        <span class="modal-value">${selectedGuest.checkout}</span>
+      </div>
+      <div class="modal-row">
+        <span class="modal-label">Total Stay:</span>
+        <span class="modal-value">${selectedGuest.stay}</span>
+      </div>
+      <div class="modal-row" style="border-bottom:2px solid #64b5f6;padding-bottom:16px;margin-bottom:16px">
+        <span class="modal-label" style="font-size:16px">Total Amount:</span>
+        <span class="modal-value" style="font-size:20px;color:#2e7d32">₹ ${selectedGuest.bill.toLocaleString()}</span>
+      </div>
+      <p style="color:#607d8b;font-size:13px;text-align:center">This will process the check-out and generate a receipt</p>
+    `;
+    document.getElementById('checkoutModal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('checkoutModal').classList.remove('show');
+    selectedGuest = null;
+  }
+
+  function confirmCheckout() {
+    if (selectedGuest) {
+      alert(`✅ Check-out processed successfully!\n\nGuest: ${selectedGuest.name}\nRoom: ${selectedGuest.room}\nAmount: ₹${selectedGuest.bill.toLocaleString()}\n\nReceipt has been generated.\nRoom ${selectedGuest.room} is now available.`);
+      closeModal();
+    }
+  }
+
+  // Close modal on outside click
+  document.getElementById('checkoutModal').addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal')) {
+      closeModal();
+    }
+  });
+
+  // Initial render
+  renderTable();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarai 2.0 – Admin Reports</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f7fa;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        animation: slideDown 0.5s ease-out;
+      }
+
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logo {
+        width: 45px;
+        height: 45px;
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 24px;
+      }
+
+      .brand-text h2 {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        margin: 0;
+      }
+
+      .brand-text p {
+        font-size: 0.8rem;
+        opacity: 0.9;
+        margin: 0;
+      }
+
+      .back-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-top: 85px;
+        padding: 2rem;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .page-title {
+        font-size: 2rem;
+        color: #1e3c72;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .page-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.8rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid #1e3c72;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 60, 114, 0.05),
+          transparent
+        );
+        border-radius: 0 0 0 100%;
+      }
+
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 60, 114, 0.1),
+          rgba(42, 82, 152, 0.05)
+        );
+      }
+
+      .stat-title {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin: 0.5rem 0;
+        line-height: 1;
+      }
+
+      .stat-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.85rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-weight: 600;
+        margin-top: 0.5rem;
+      }
+
+      .stat-change.positive {
+        background: rgba(5, 150, 105, 0.1);
+        color: #059669;
+      }
+
+      .stat-change.negative {
+        background: rgba(220, 38, 38, 0.1);
+        color: #dc2626;
+      }
+
+      .stat-small {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 0.5rem;
+      }
+
+      /* Chart Section */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .chart-box {
+        background: white;
+        padding: 2rem;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .chart-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1e3c72;
+      }
+
+      .chart-legend {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+      }
+
+      .legend-dot.blue {
+        background: #1e3c72;
+      }
+
+      .legend-dot.red {
+        background: #dc2626;
+      }
+
+      .legend-dot.green {
+        background: #059669;
+      }
+
+      .chart-wrapper {
+        position: relative;
+        height: 300px;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      /* Summary Box */
+      .summary-box {
+        background: linear-gradient(
+          135deg,
+          rgba(30, 60, 114, 0.05),
+          rgba(42, 82, 152, 0.02)
+        );
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 2px solid rgba(30, 60, 114, 0.1);
+      }
+
+      .summary-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin-bottom: 1rem;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .summary-item:last-child {
+        border-bottom: none;
+      }
+
+      .summary-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+
+      .summary-value {
+        font-weight: 700;
+        color: #1e3c72;
+        font-size: 1rem;
+      }
+
+      /* Insights Section */
+      .insights-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+      }
+
+      .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .insight-card {
+        padding: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 60, 114, 0.03),
+          transparent
+        );
+        border-radius: 12px;
+        border-left: 4px solid #1e3c72;
+      }
+
+      .insight-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .insight-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e3c72;
+        margin-bottom: 0.5rem;
+      }
+
+      .insight-desc {
+        color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      /* Export Section */
+      .export-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+
+      .export-info h3 {
+        font-size: 1.2rem;
+        color: #1e3c72;
+        margin-bottom: 0.5rem;
+      }
+
+      .export-info p {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+
+      .export-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .export-btn {
+        background: linear-gradient(135deg, #1e3c72, #dc2626);
+        padding: 0.85rem 1.8rem;
+        border: none;
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .export-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+      }
+
+      .export-btn.secondary {
+        background: white;
+        color: #1e3c72;
+        border: 2px solid #1e3c72;
+      }
+
+      .export-btn.secondary:hover {
+        background: #1e3c72;
+        color: white;
+      }
+
+      /* Responsive */
+      @media (max-width: 968px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          padding: 1rem;
+        }
+
+        .brand-text h2 {
+          font-size: 1.2rem;
+        }
+
+        .back-btn {
+          padding: 0.4rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        .main-content {
+          padding: 1.5rem;
+          margin-top: 75px;
+        }
+
+        .page-title {
+          font-size: 1.5rem;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .export-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .export-buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              fill="#1e3c72"
+              d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"
+            />
+            <circle fill="#dc2626" cx="12" cy="12" r="3" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h2>Sarai 2.0</h2>
+          <p>Admin Reports Center</p>
+        </div>
+      </div>
+      <a href="admindashboard.html" class="back-btn"> ← Back to Dashboard </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <h1 class="page-title">📊 Administrative Reports</h1>
+      <p class="page-subtitle">
+        Comprehensive statewide analytics and monitoring dashboard
+      </p>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div>
+              <div class="stat-title">Total Hotels</div>
+              <div class="stat-value" id="totalHotels">127</div>
+              <div class="stat-change positive">↑ 8 new this month</div>
+            </div>
+            <div class="stat-icon">🏨</div>
+          </div>
+          <div class="stat-small">Network coverage across the state</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div>
+              <div class="stat-title">Today's Check-ins</div>
+              <div class="stat-value" id="totalCI">284</div>
+              <div class="stat-change positive">↑ 12% vs yesterday</div>
+            </div>
+            <div class="stat-icon">✅</div>
+          </div>
+          <div class="stat-small">Across all registered hotels</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div>
+              <div class="stat-title">Foreign Guests</div>
+              <div class="stat-value" id="foreign">89</div>
+              <div class="stat-change positive">↑ 15 vs yesterday</div>
+            </div>
+            <div class="stat-icon">🌍</div>
+          </div>
+          <div class="stat-small">Detected from passport OCR</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <div>
+              <div class="stat-title">Suspect Matches</div>
+              <div class="stat-value" id="suspect">17</div>
+              <div class="stat-change negative">⚠️ Requires attention</div>
+            </div>
+            <div class="stat-icon">🚨</div>
+          </div>
+          <div class="stat-small">Matches from statewide database</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid -->
+      <div class="charts-grid">
+        <!-- Main Chart -->
+        <div class="chart-box">
+          <div class="chart-header">
+            <div class="chart-title">Statewide Check-in Flow (Last 7 Days)</div>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-dot blue"></div>
+                <span>Check-ins</span>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="checkinChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Summary Box -->
+        <div class="chart-box">
+          <div class="chart-title">Weekly Summary</div>
+          <div class="summary-box">
+            <div class="summary-item">
+              <span class="summary-label">Total Check-ins</span>
+              <span class="summary-value">1,847</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Avg Daily Rate</span>
+              <span class="summary-value">264</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Peak Day</span>
+              <span class="summary-value">Friday</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Active Hotels</span>
+              <span class="summary-value">127</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Suspects Found</span>
+              <span class="summary-value" style="color: #dc2626">89</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crime Rate Chart -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <div class="chart-title">Crime-Flag Match Rate (Last 7 Days)</div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot red"></div>
+              <span>Match Rate (%)</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="crimeChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="insights-section">
+        <div class="chart-title">🔍 Key Insights</div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-icon">📈</div>
+            <div class="insight-title">Check-in Growth</div>
+            <div class="insight-desc">
+              Daily check-ins increased by 15% this week, with Friday showing
+              the highest activity at 341 check-ins across all hotels.
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon">⚠️</div>
+            <div class="insight-title">Elevated Alert Level</div>
+            <div class="insight-desc">
+              Crime-flag match rate spiked to 6.2% on Friday. Increased
+              monitoring recommended for weekend operations.
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-icon">🌍</div>
+            <div class="insight-title">Foreign Guest Trends</div>
+            <div class="insight-desc">
+              International guest arrivals up 22% this week. Most common
+              origins: UK, USA, Germany, and Singapore.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Section -->
+      <div class="export-section">
+        <div class="export-info">
+          <h3>📥 Export Reports</h3>
+          <p>Download comprehensive analytics in your preferred format</p>
+        </div>
+        <div class="export-buttons">
+          <button class="export-btn" onclick="exportReport('csv')">
+            📊 Export CSV
+          </button>
+          <button class="export-btn" onclick="exportReport('pdf')">
+            📄 Export PDF
+          </button>
+          <button class="export-btn secondary" onclick="exportReport('excel')">
+            📗 Export Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+      // Data
+      const dataAdmin = {
+        hotels: 127,
+        checkins: 284,
+        foreign: 89,
+        suspect: 17,
+      };
+
+      // Update values
+      document.getElementById("totalHotels").textContent = dataAdmin.hotels;
+      document.getElementById("totalCI").textContent = dataAdmin.checkins;
+      document.getElementById("foreign").textContent = dataAdmin.foreign;
+      document.getElementById("suspect").textContent = dataAdmin.suspect;
+
+      // Check-in Chart
+      const checkinCtx = document.getElementById("checkinChart");
+      new Chart(checkinCtx, {
+        type: "line",
+        data: {
+          labels: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ],
+          datasets: [
+            {
+              label: "Check-ins",
+              data: [245, 223, 267, 298, 341, 312, 284],
+              borderColor: "#1e3c72",
+              backgroundColor: "rgba(30, 60, 114, 0.1)",
+              borderWidth: 3,
+              fill: true,
+              tension: 0.4,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+              pointBackgroundColor: "#1e3c72",
+              pointBorderColor: "#fff",
+              pointBorderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(30, 60, 114, 0.95)",
+              padding: 12,
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              borderColor: "#1e3c72",
+              borderWidth: 1,
+              displayColors: false,
+              callbacks: {
+                label: (context) => `Check-ins: ${context.parsed.y}`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: "#6c757d",
+                font: { size: 11 },
+              },
+              grid: {
+                color: "rgba(0, 0, 0, 0.05)",
+                drawBorder: false,
+              },
+            },
+            x: {
+              ticks: {
+                color: "#6c757d",
+                font: { size: 11 },
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
+
+      // Crime Rate Chart
+      const crimeCtx = document.getElementById("crimeChart");
+      new Chart(crimeCtx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ],
+          datasets: [
+            {
+              label: "Match Rate %",
+              data: [2.1, 1.9, 4.0, 3.5, 6.2, 5.8, 4.7],
+              backgroundColor: "rgba(220, 38, 38, 0.8)",
+              borderRadius: 8,
+              borderSkipped: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "rgba(220, 38, 38, 0.95)",
+              padding: 12,
+              titleColor: "#fff",
+              bodyColor: "#fff",
+              borderColor: "#dc2626",
+              borderWidth: 1,
+              displayColors: false,
+              callbacks: {
+                label: (context) => `Match Rate: ${context.parsed.y}%`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: (value) => value + "%",
+                color: "#6c757d",
+                font: { size: 11 },
+              },
+              grid: {
+                color: "rgba(0, 0, 0, 0.05)",
+                drawBorder: false,
+              },
+            },
+            x: {
+              ticks: {
+                color: "#6c757d",
+                font: { size: 11 },
+              },
+              grid: {
+                display: false,
+              },
+            },
+          },
+        },
+      });
+
+      // Export Report
+      function exportReport(format) {
+        if (format === "csv") {
+          const csvData = [
+            ["Sarai 2.0 - Admin Report"],
+            ["Generated:", new Date().toLocaleString()],
+            [""],
+            ["Metric", "Value"],
+            ["Total Hotels", dataAdmin.hotels],
+            ["Today Check-ins", dataAdmin.checkins],
+            ["Foreign Guests", dataAdmin.foreign],
+            ["Suspect Matches", dataAdmin.suspect],
+            [""],
+            ["Check-in Flow (Last 7 Days)"],
+            ["Day", "Check-ins"],
+            ["Monday", "245"],
+            ["Tuesday", "223"],
+            ["Wednesday", "267"],
+            ["Thursday", "298"],
+            ["Friday", "341"],
+            ["Saturday", "312"],
+            ["Sunday", "284"],
+          ];
+
+          const csv = csvData.map((row) => row.join(",")).join("\n");
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download =
+            "sarai-admin-report-" +
+            new Date().toISOString().split("T")[0] +
+            ".csv";
+          a.click();
+        } else {
+          alert(
+            `${format.toUpperCase()} Export feature coming soon!\n\nThis will generate a comprehensive ${format.toUpperCase()} report with all charts and metrics.`
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

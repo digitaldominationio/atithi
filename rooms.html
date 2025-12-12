@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Rooms | Sarai 2.0</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+    background:linear-gradient(135deg,#e3f2fd 0%,#f3e5f5 50%,#fce4ec 100%);
+    color:#263238;min-height:100vh;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom,0);
+  }
+  
+/* ---- Sidebar main container ---- */
+.sidebar{
+    position:fixed;left:0;top:0;height:100vh;width:280px;
+    background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+    box-shadow:4px 0 20px rgba(0,0,0,.08);z-index:1000;overflow-y:auto;
+    transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.sidebar.hidden{transform:translateX(-100%)}
+
+/* ---- Sidebar header ---- */
+.sidebar-header{
+    padding:28px 22px;
+    background:linear-gradient(135deg,#64b5f6 0%,#ba68c8 50%,#f06292 100%);
+    color:#fff;text-align:center;
+    border-bottom-left-radius:12px;
+    border-bottom-right-radius:12px;
+}
+.sidebar-logo{
+    width:64px;height:64px;margin:0 auto 10px;border-radius:50%;
+    background:#fff;color:#37474f;display:flex;
+    align-items:center;justify-content:center;font-weight:800;
+    font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.12)
+}
+.sidebar-header h2{font-size:20px;letter-spacing:.8px}
+.sidebar-header p{font-size:12px;opacity:.95}
+
+/* ---- Sidebar links ---- */
+.sidebar-nav{padding:18px 0}
+.nav-item{
+    display:flex;align-items:center;padding:14px 20px;
+    color:#546e7a;text-decoration:none;border-left:4px solid transparent;
+    font-weight:600;font-size:15px;transition:all .18s ease;
+    border-radius:10px;margin:6px 12px;
+}
+.nav-item:hover{
+    background:linear-gradient(90deg,rgba(100,181,246,.06),transparent);
+    color:#0b6fb0;border-left-color:#64b5f6;
+}
+.nav-item.active{
+    background:linear-gradient(90deg,rgba(100,181,246,.1),transparent);
+    border-left-color:#64b5f6;color:#0b6fb0;
+}
+.nav-item-icon{
+    width:36px;text-align:center;margin-right:12px;font-size:18px;
+}
+
+  .main-content{margin-left:280px;padding:28px;transition:margin-left .35s;min-height:100vh}
+  
+  /* Top Bar Enhanced */
+  .top-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:24px;
+    background:#fff;
+    padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+    position:relative;
+    overflow:hidden;
+  }
+  .top-bar::before{
+    content:'';
+    position:absolute;
+    top:0;
+    right:0;
+    width:200px;
+    height:200px;
+    background:linear-gradient(135deg,rgba(100,181,246,.08),rgba(240,98,146,.08));
+    border-radius:50%;
+    transform:translate(50px,-50px);
+  }
+  .menu-toggle{
+    display:none;
+    background:linear-gradient(135deg,#64b5f6,#f06292);
+    color:#fff;
+    border:none;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    font-size:18px;
+    box-shadow:0 4px 12px rgba(100,181,246,.3);
+  }
+  .page-title{
+    font-size:28px;
+    font-weight:800;
+    background:linear-gradient(135deg,#64b5f6,#ba68c8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:4px;
+  }
+  .page-subtitle{
+    color:#607d8b;
+    font-size:14px;
+    font-weight:500;
+  }
+  .new-checkin-btn{
+    padding:12px 24px;
+    border-radius:24px;
+    border:none;
+    background:linear-gradient(135deg,#64b5f6,#ba68c8,#f06292);
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+    font-size:14px;
+    box-shadow:0 6px 16px rgba(100,181,246,.4);
+    transition:transform .2s ease,box-shadow .2s ease;
+    position:relative;
+    z-index:1;
+  }
+  .new-checkin-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(100,181,246,.5);
+  }
+  
+  /* Stats Summary */
+  .stats-summary{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .stat-box{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(0,0,0,.06);
+    position:relative;
+    overflow:hidden;
+  }
+  .stat-box::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:4px;
+    height:100%;
+  }
+  .stat-box.available::before{background:linear-gradient(180deg,#66bb6a,#43a047)}
+  .stat-box.occupied::before{background:linear-gradient(180deg,#ef5350,#e53935)}
+  .stat-box.total::before{background:linear-gradient(180deg,#42a5f5,#1e88e5)}
+  .stat-label{
+    font-size:13px;
+    color:#607d8b;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    margin-bottom:8px;
+  }
+  .stat-value{
+    font-size:32px;
+    font-weight:900;
+    color:#263238;
+  }
+  .stat-icon{
+    position:absolute;
+    top:16px;
+    right:16px;
+    font-size:32px;
+    opacity:.15;
+  }
+  
+  /* Filter Bar */
+  .filter-bar{
+    background:#fff;
+    padding:18px 20px;
+    border-radius:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,.06);
+    margin-bottom:20px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .filter-label{
+    font-size:14px;
+    font-weight:700;
+    color:#546e7a;
+  }
+  .filter-btn{
+    padding:8px 18px;
+    border:2px solid #e0e0e0;
+    background:#fff;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    color:#546e7a;
+    transition:all .2s ease;
+  }
+  .filter-btn:hover{
+    border-color:#64b5f6;
+    color:#64b5f6;
+  }
+  .filter-btn.active{
+    background:linear-gradient(135deg,#64b5f6,#ba68c8);
+    border-color:transparent;
+    color:#fff;
+    box-shadow:0 4px 12px rgba(100,181,246,.3);
+  }
+  
+  /* Section Header */
+  .section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+  }
+  .section-title{
+    font-size:20px;
+    font-weight:700;
+    color:#263238;
+  }
+  .section-count{
+    color:#90a4ae;
+    font-weight:700;
+    font-size:14px;
+  }
+  
+  /* Rooms Grid Enhanced */
+  .rooms-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:18px;
+  }
+  .room-card{
+    background:#fff;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,.06);
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+    border:2px solid transparent;
+  }
+  .room-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 12px 32px rgba(0,0,0,.12);
+    border-color:rgba(100,181,246,.3);
+  }
+  .room-card::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:4px;
+  }
+  .room-card.available::before{
+    background:linear-gradient(90deg,#66bb6a,#43a047);
+  }
+  .room-card.occupied::before{
+    background:linear-gradient(90deg,#ef5350,#e53935);
+  }
+  .room-number{
+    font-size:24px;
+    font-weight:900;
+    color:#263238;
+    margin-bottom:8px;
+  }
+  .room-type{
+    font-size:13px;
+    color:#607d8b;
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  .room-pax{
+    font-size:12px;
+    color:#90a4ae;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .room-status{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    border-radius:16px;
+    font-weight:700;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+  .status-available{
+    background:rgba(102,187,106,.15);
+    color:#2e7d32;
+  }
+  .status-occupied{
+    background:rgba(239,83,80,.15);
+    color:#c62828;
+  }
+  .status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+  }
+  .status-available .status-dot{
+    background:#66bb6a;
+    box-shadow:0 0 8px rgba(102,187,106,.6);
+  }
+  .status-occupied .status-dot{
+    background:#ef5350;
+    box-shadow:0 0 8px rgba(239,83,80,.6);
+  }
+  
+  /* FAB */
+  .fab{
+    display:none;
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#64b5f6,#f06292);
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:32px;
+    z-index:1250;
+    box-shadow:0 8px 24px rgba(100,181,246,.4);
+    cursor:pointer;
+    border:none;
+    transition:transform .2s ease;
+  }
+  .fab:hover{
+    transform:scale(1.1);
+  }
+  
+  /* Mobile Responsive */
+  @media(max-width:768px){
+    .sidebar{transform:translateX(-100%);position:fixed;z-index:1100}
+    .sidebar.active{transform:translateX(0)}
+    .menu-toggle{display:inline-flex}
+    .main-content{margin-left:0;padding:18px 14px 90px}
+    .fab{display:flex}
+    .top-bar{flex-direction:column;align-items:flex-start;gap:16px}
+    .page-title{font-size:24px}
+    .rooms-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+    .stats-summary{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">🏨</div>
+        <h2>Sarai 2.0</h2>
+        <p>Hotel Management</p>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="dashboard2.html" class="nav-item">
+            <span class="nav-item-icon">📊</span>
+            Dashboard
+        </a>
+
+        <a href="rooms.html" class="nav-item active">
+            <span class="nav-item-icon">🛏️</span>
+            Room Available
+        </a>
+
+        <a href="checkins.html" class="nav-item">
+            <span class="nav-item-icon">✅</span>
+            Check-ins
+        </a>
+
+        <a href="checkouts.html" class="nav-item">
+            <span class="nav-item-icon">🚪</span>
+            Check-outs
+        </a>
+
+        <a href="pax.html" class="nav-item">
+            <span class="nav-item-icon">🧾</span>
+            Total Pax
+        </a>
+
+        <a href="new-checkin.html" class="nav-item">
+            <span class="nav-item-icon">➕</span>
+            New Check-in
+        </a>
+
+        <a href="reports.html" class="nav-item">
+            <span class="nav-item-icon">📈</span>
+            Reports
+        </a>
+
+        <a href="settings.html" class="nav-item">
+            <span class="nav-item-icon">⚙️</span>
+            Settings
+        </a>
+
+        <a href="login2.html" class="nav-item">
+            <span class="nav-item-icon">🚪</span>
+            Logout
+        </a>
+    </nav>
+</aside>
+
+<main class="main-content">
+  <div class="top-bar">
+    <button id="menuToggle" class="menu-toggle">☰</button>
+    <div>
+      <h1 class="page-title">Rooms Available</h1>
+      <p class="page-subtitle">Complete overview of room inventory</p>
+    </div>
+    <div>
+      <button class="new-checkin-btn" onclick="location.href='new-checkin.html'">+ New Check-in</button>
+    </div>
+  </div>
+
+  <div class="stats-summary">
+    <div class="stat-box total">
+      <div class="stat-label">Total Rooms</div>
+      <div class="stat-value" id="totalRooms">0</div>
+      <div class="stat-icon">🏨</div>
+    </div>
+    <div class="stat-box available">
+      <div class="stat-label">Available</div>
+      <div class="stat-value" id="availableRooms">0</div>
+      <div class="stat-icon">✓</div>
+    </div>
+    <div class="stat-box occupied">
+      <div class="stat-label">Occupied</div>
+      <div class="stat-value" id="occupiedRooms">0</div>
+      <div class="stat-icon">✕</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" data-filter="all">All Rooms</button>
+    <button class="filter-btn" data-filter="available">Available</button>
+    <button class="filter-btn" data-filter="occupied">Occupied</button>
+    <button class="filter-btn" data-filter="deluxe">Deluxe</button>
+    <button class="filter-btn" data-filter="standard">Standard</button>
+  </div>
+
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">Room List</h2>
+      <div class="section-count">Showing: <span id="showingCount">0</span></div>
+    </div>
+
+    <div class="rooms-grid" id="roomsGrid" aria-live="polite"></div>
+  </section>
+</main>
+
+<button class="fab" id="fab" aria-label="New check-in" onclick="location.href='new-checkin.html'">+</button>
+
+<script>
+  // Sample dynamic data
+  const rooms = Array.from({length:120},(_,i)=>{
+    const num = 100 + i + 1;
+    const types = ['Deluxe', 'Standard', 'Suite', 'Standard'];
+    const type = types[i % 4];
+    const occupied = Math.random() > 0.3; // 70% occupancy
+    const pax = occupied ? Math.floor(Math.random() * 3) + 1 : 0;
+    return {room: num, type, occupied, pax};
+  });
+
+  let currentFilter = 'all';
+  const grid = document.getElementById('roomsGrid');
+  const totalRoomsEl = document.getElementById('totalRooms');
+  const availableRoomsEl = document.getElementById('availableRooms');
+  const occupiedRoomsEl = document.getElementById('occupiedRooms');
+  const showingCountEl = document.getElementById('showingCount');
+
+  // Calculate stats
+  const totalRooms = rooms.length;
+  const occupiedCount = rooms.filter(r => r.occupied).length;
+  const availableCount = totalRooms - occupiedCount;
+
+  // Animate stats
+  function animateValue(el, end, duration = 1000) {
+    let start = 0;
+    const increment = end / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= end) {
+        el.textContent = end;
+        clearInterval(timer);
+      } else {
+        el.textContent = Math.round(current);
+      }
+    }, 16);
+  }
+
+  animateValue(totalRoomsEl, totalRooms);
+  animateValue(availableRoomsEl, availableCount);
+  animateValue(occupiedRoomsEl, occupiedCount);
+
+  // Render rooms
+  function renderRooms(filter = 'all') {
+    grid.innerHTML = '';
+    let filtered = rooms;
+
+    if (filter === 'available') {
+      filtered = rooms.filter(r => !r.occupied);
+    } else if (filter === 'occupied') {
+      filtered = rooms.filter(r => r.occupied);
+    } else if (filter === 'deluxe') {
+      filtered = rooms.filter(r => r.type === 'Deluxe');
+    } else if (filter === 'standard') {
+      filtered = rooms.filter(r => r.type === 'Standard');
+    }
+
+    showingCountEl.textContent = filtered.length;
+
+    filtered.forEach((r, idx) => {
+      const div = document.createElement('div');
+      div.className = `room-card ${r.occupied ? 'occupied' : 'available'}`;
+      div.style.animationDelay = `${idx * 0.02}s`;
+      div.innerHTML = `
+        <div class="room-number">${r.room}</div>
+        <div class="room-type">${r.type}</div>
+        <div class="room-pax">👥 ${r.pax} ${r.pax === 1 ? 'guest' : 'guests'}</div>
+        <div class="room-status ${r.occupied ? 'status-occupied' : 'status-available'}">
+          <span class="status-dot"></span>
+          ${r.occupied ? 'Occupied' : 'Available'}
+        </div>
+      `;
+      div.onclick = () => location.href = r.occupied ? 'checkins.html' : 'new-checkin.html';
+      grid.appendChild(div);
+    });
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      renderRooms(filter);
+    });
+  });
+
+  // Initial render
+  renderRooms();
+
+  // Mobile sidebar toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  menuToggle && menuToggle.addEventListener('click', () => sidebar.classList.toggle('active'));
+</script>
+</body>
+</html>

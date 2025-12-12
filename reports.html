@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Reports | Sarai 2.0</title>
+
+<style>
+/* -------------------------------------
+   Import SAME SIDEBAR + THEME CSS HERE
+----------------------------------------*/
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,system-ui;
+  background:linear-gradient(135deg,#e3f2fd,#f3e5f5);
+  color:#263238;
+  min-height:100vh;
+}
+
+/* ----- SIDEBAR (copied from dashboard2) ----- */
+.sidebar{
+  position:fixed;left:0;top:0;height:100vh;width:280px;
+  background:linear-gradient(180deg,#fff,#fafafa);
+  box-shadow:4px 0 20px rgba(0,0,0,.08);
+  overflow-y:auto;z-index:1000;
+  transition:transform .3s ease;
+}
+.sidebar-header{
+  padding:28px 22px;
+  background:linear-gradient(135deg,#64b5f6,#ba68c8,#f06292);
+  color:white;text-align:center;
+  border-bottom-left-radius:12px;border-bottom-right-radius:12px;
+}
+.sidebar-logo{
+  width:64px;height:64px;border-radius:50%;
+  background:white;color:#37474f;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;
+}
+.sidebar-nav{padding:18px 0;}
+.nav-item{
+  display:flex;align-items:center;
+  padding:14px 20px;margin:6px 12px;
+  color:#546e7a;text-decoration:none;font-weight:600;
+  border-left:4px solid transparent;border-radius:10px;
+  transition:.2s;
+}
+.nav-item:hover{
+  background:linear-gradient(90deg,rgba(100,181,246,.06),transparent);
+  color:#0b6fb0;border-left-color:#64b5f6;
+}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(100,181,246,.1),transparent);
+  border-left-color:#64b5f6;color:#0b6fb0;
+}
+.nav-item-icon{
+  width:32px;font-size:18px;margin-right:10px;text-align:center;
+}
+
+/* ----- MOBILE MENU TOGGLE ----- */
+.mobile-menu-btn{
+  display:none;
+  position:fixed;top:20px;left:20px;z-index:1001;
+  background:linear-gradient(135deg,#64b5f6,#ba68c8);
+  color:white;border:none;width:48px;height:48px;
+  border-radius:12px;font-size:20px;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  transition:transform .2s;
+}
+.mobile-menu-btn:active{
+  transform:scale(0.95);
+}
+.mobile-overlay{
+  display:none;
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.5);z-index:999;
+  opacity:0;transition:opacity .3s ease;
+}
+.mobile-overlay.active{
+  opacity:1;
+}
+
+/* ----- MAIN CONTENT ----- */
+.main-content{
+  margin-left:280px;padding:28px;
+  max-width:1400px;
+}
+
+/* ----- PAGE HEADER ----- */
+.header-box{
+  background:white;padding:24px 28px;border-radius:14px;
+  box-shadow:0 8px 28px rgba(0,0,0,.06);
+  margin-bottom:24px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.header-left{flex:1}
+.header-title{
+  font-size:26px;font-weight:800;color:#263238;
+  margin-bottom:4px;
+}
+.header-sub{
+  color:#607d8b;font-size:14px;
+}
+.date-range{
+  background:linear-gradient(135deg,rgba(100,181,246,.1),rgba(186,104,200,.1));
+  padding:10px 18px;border-radius:10px;
+  font-size:13px;font-weight:600;color:#37474f;
+  border:1px solid rgba(100,181,246,.2);
+}
+
+/* ----- METRIC CARDS ----- */
+.metrics{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;margin:24px 0;
+}
+.metric-card{
+  background:white;padding:24px;border-radius:14px;
+  box-shadow:0 8px 22px rgba(0,0,0,.06);position:relative;
+  border:1px solid rgba(255,255,255,.9);
+  transition:transform .2s,box-shadow .2s;
+}
+.metric-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 32px rgba(0,0,0,.1);
+}
+.metric-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:12px;
+}
+.metric-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+}
+.metric-icon.blue{background:linear-gradient(135deg,rgba(100,181,246,.15),rgba(100,181,246,.05))}
+.metric-icon.pink{background:linear-gradient(135deg,rgba(240,98,146,.15),rgba(240,98,146,.05))}
+.metric-icon.purple{background:linear-gradient(135deg,rgba(186,104,200,.15),rgba(186,104,200,.05))}
+.metric-icon.green{background:linear-gradient(135deg,rgba(102,187,106,.15),rgba(102,187,106,.05))}
+
+.metric-title{font-size:13px;color:#78909c;font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.metric-value{
+  font-size:36px;font-weight:900;
+  background:linear-gradient(135deg,#64b5f6,#f06292);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1.2;margin-bottom:8px;
+}
+.metric-change{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:600;padding:4px 10px;
+  border-radius:6px;margin-top:8px;
+}
+.metric-change.up{background:rgba(102,187,106,.15);color:#2e7d32}
+.metric-change.down{background:rgba(244,67,54,.15);color:#c62828}
+.metric-sub{color:#90a4ae;margin-top:6px;font-size:13px}
+
+/* ----- TWO COLUMN LAYOUT ----- */
+.two-col{
+  display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:24px;
+}
+
+/* ----- CHART CONTAINERS ----- */
+.chart-card{
+  background:white;padding:24px;
+  border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.06);
+  height:fit-content;
+}
+.chart-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:18px;
+}
+.chart-title{
+  font-size:17px;font-weight:800;color:#263238;
+}
+.chart-legend{
+  display:flex;gap:16px;font-size:12px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:6px;
+}
+.legend-dot{
+  width:12px;height:12px;border-radius:3px;
+}
+.legend-dot.blue{background:#64b5f6}
+.legend-dot.pink{background:#f06292}
+.legend-dot.purple{background:#ba68c8}
+
+.chart-wrapper{
+  position:relative;height:280px;
+}
+canvas{width:100%!important;height:100%!important}
+
+/* ----- TABLE ----- */
+.data-table{
+  width:100%;border-collapse:collapse;margin-top:12px;
+}
+.data-table th{
+  background:linear-gradient(135deg,rgba(100,181,246,.08),rgba(186,104,200,.08));
+  padding:12px;text-align:left;font-size:12px;
+  color:#546e7a;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.data-table td{
+  padding:14px 12px;border-bottom:1px solid #eceff1;
+  font-size:14px;color:#37474f;
+}
+.data-table tr:hover{background:rgba(100,181,246,.03)}
+
+/* ----- INSIGHTS BOX ----- */
+.insights-box{
+  background:white;padding:24px;border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+  margin-top:20px;
+}
+.insight-item{
+  display:flex;gap:14px;padding:16px;
+  background:linear-gradient(90deg,rgba(100,181,246,.04),transparent);
+  border-radius:10px;margin-bottom:12px;
+  border-left:3px solid #64b5f6;
+}
+.insight-icon{
+  font-size:24px;flex-shrink:0;
+}
+.insight-text{
+  flex:1;
+}
+.insight-title{
+  font-weight:700;color:#263238;margin-bottom:4px;font-size:14px;
+}
+.insight-desc{
+  color:#78909c;font-size:13px;line-height:1.5;
+}
+
+/* ----- EXPORT BOX ----- */
+.export-box{
+  background:white;padding:24px;margin-top:24px;
+  border-radius:14px;box-shadow:0 8px 22px rgba(0,0,0,.05);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.export-left{flex:1}
+.export-buttons{display:flex;gap:12px;flex-wrap:wrap}
+.export-btn{
+  background:linear-gradient(135deg,#64b5f6,#ba68c8);
+  color:white;border:none;padding:12px 24px;font-weight:700;
+  border-radius:10px;cursor:pointer;font-size:14px;
+  transition:transform .2s,box-shadow .2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.export-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(100,181,246,.3);
+}
+.export-btn.secondary{
+  background:white;color:#64b5f6;
+  border:2px solid #64b5f6;
+}
+.export-btn.secondary:hover{
+  background:#64b5f6;color:white;
+}
+
+/* ----- MOBILE ----- */
+@media(max-width:968px){
+  .two-col{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{
+    transform:translateX(-100%);
+  }
+  .sidebar.active{
+    transform:translateX(0);
+  }
+  .mobile-menu-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .mobile-overlay{
+    display:block;
+  }
+  .mobile-overlay.active{
+    display:block;
+  }
+  .main-content{margin-left:0;padding:18px;padding-top:80px;}
+  .header-box{padding:18px}
+  .metrics{grid-template-columns:1fr}
+  .export-box{flex-direction:column;align-items:stretch}
+  .export-buttons{flex-direction:column}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MOBILE MENU BUTTON -->
+<button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Toggle Menu">
+  ☰
+</button>
+
+<!-- MOBILE OVERLAY -->
+<div class="mobile-overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+      <div class="sidebar-logo">🏨</div>
+      <h2>Sarai 2.0</h2>
+      <p>Hotel Management</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="dashboard2.html" class="nav-item"><span class="nav-item-icon">📊</span>Dashboard</a>
+    <a href="rooms.html" class="nav-item"><span class="nav-item-icon">🛏️</span>Room Available</a>
+    <a href="checkins.html" class="nav-item"><span class="nav-item-icon">✅</span>Check-ins</a>
+    <a href="checkouts.html" class="nav-item"><span class="nav-item-icon">🚪</span>Check-outs</a>
+    <a href="pax.html" class="nav-item"><span class="nav-item-icon">🧾</span>Total Pax</a>
+    <a href="new-checkin.html" class="nav-item"><span class="nav-item-icon">➕</span>New Check-in</a>
+    <a href="reports.html" class="nav-item active"><span class="nav-item-icon">📈</span>Reports</a>
+    <a href="settings.html" class="nav-item"><span class="nav-item-icon">⚙️</span>Settings</a>
+    <a href="login2.html" class="nav-item"><span class="nav-item-icon">🚪</span>Logout</a>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- Header -->
+  <div class="header-box">
+    <div class="header-left">
+      <div class="header-title">📊 Analytics & Reports</div>
+      <div class="header-sub">Comprehensive overview of hotel performance and guest metrics</div>
+    </div>
+    <div class="date-range">
+      📅 Dec 5 - Dec 12, 2025
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <section class="metrics">
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="metric-icon blue">✅</div>
+      </div>
+      <div class="metric-title">Check-ins Today</div>
+      <div class="metric-value" id="mCheckins">18</div>
+      <div class="metric-change up">↑ 12.5% vs yesterday</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="metric-icon pink">🚪</div>
+      </div>
+      <div class="metric-title">Check-outs Today</div>
+      <div class="metric-value" id="mCheckouts">12</div>
+      <div class="metric-change down">↓ 5.2% vs yesterday</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="metric-icon purple">👥</div>
+      </div>
+      <div class="metric-title">Active Guests</div>
+      <div class="metric-value" id="mPax">42</div>
+      <div class="metric-change up">↑ 8 guests from yesterday</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <div class="metric-icon green">📈</div>
+      </div>
+      <div class="metric-title">Occupancy Rate</div>
+      <div class="metric-value" id="mOcc">84%</div>
+      <div class="metric-sub">42 of 50 rooms occupied</div>
+    </div>
+
+  </section>
+
+  <!-- Two Column Layout -->
+  <div class="two-col">
+    
+    <!-- Left: Charts -->
+    <div>
+      
+      <!-- Occupancy Trend -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">7-Day Occupancy Trend</div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot blue"></div>
+              <span>Occupancy %</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="occChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Check-in vs Check-out -->
+      <div class="chart-card" style="margin-top:20px">
+        <div class="chart-header">
+          <div class="chart-title">Guest Flow (Past 7 Days)</div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot blue"></div>
+              <span>Check-ins</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot pink"></div>
+              <span>Check-outs</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="flowChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Revenue Chart -->
+      <div class="chart-card" style="margin-top:20px">
+        <div class="chart-header">
+          <div class="chart-title">Weekly Revenue Overview</div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot purple"></div>
+              <span>Revenue (₹)</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="revenueChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Summary & Insights -->
+    <div>
+      
+      <!-- Quick Stats -->
+      <div class="chart-card">
+        <div class="chart-title">📋 Weekly Summary</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th style="text-align:right">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Check-ins</td>
+              <td style="text-align:right;font-weight:700">126</td>
+            </tr>
+            <tr>
+              <td>Total Check-outs</td>
+              <td style="text-align:right;font-weight:700">118</td>
+            </tr>
+            <tr>
+              <td>Avg Occupancy</td>
+              <td style="text-align:right;font-weight:700">78%</td>
+            </tr>
+            <tr>
+              <td>Peak Day</td>
+              <td style="text-align:right;font-weight:700">Saturday</td>
+            </tr>
+            <tr>
+              <td>Total Revenue</td>
+              <td style="text-align:right;font-weight:700;color:#2e7d32">₹3,42,500</td>
+            </tr>
+            <tr>
+              <td>Avg Daily Rate</td>
+              <td style="text-align:right;font-weight:700">₹2,850</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Insights -->
+      <div class="insights-box" style="margin-top:20px">
+        <div class="chart-title">💡 Key Insights</div>
+        
+        <div class="insight-item">
+          <div class="insight-icon">📈</div>
+          <div class="insight-text">
+            <div class="insight-title">Strong Weekend Performance</div>
+            <div class="insight-desc">Weekend occupancy averaged 92%, significantly above weekday average of 68%</div>
+          </div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-icon">⚠️</div>
+          <div class="insight-text">
+            <div class="insight-title">Tuesday Dip Observed</div>
+            <div class="insight-desc">Tuesday showed lowest occupancy at 58%. Consider promotional offers for mid-week bookings</div>
+          </div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-icon">✨</div>
+          <div class="insight-text">
+            <div class="insight-title">Revenue Growth</div>
+            <div class="insight-desc">15% increase in revenue compared to last week, driven by higher occupancy and rates</div>
+          </div>
+        </div>
+
+        <div class="insight-item">
+          <div class="insight-icon">🎯</div>
+          <div class="insight-text">
+            <div class="insight-title">Target Achievement</div>
+            <div class="insight-desc">On track to exceed monthly occupancy target of 75% by 6 percentage points</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Export -->
+  <div class="export-box">
+    <div class="export-left">
+      <div class="chart-title">📥 Export Reports</div>
+      <div class="header-sub">Download detailed reports in your preferred format</div>
+    </div>
+    <div class="export-buttons">
+      <button class="export-btn" onclick="exportCSV()">
+        📊 Export CSV
+      </button>
+      <button class="export-btn" onclick="exportPDF()">
+        📄 Export PDF
+      </button>
+      <button class="export-btn secondary" onclick="exportExcel()">
+        📗 Export Excel
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* -----------------------------------------
+   MOBILE MENU TOGGLE
+--------------------------------------------*/
+function toggleMenu() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.mobile-overlay');
+  const btn = document.querySelector('.mobile-menu-btn');
+  
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+  
+  // Change button icon
+  if(sidebar.classList.contains('active')){
+    btn.textContent = '✕';
+  } else {
+    btn.textContent = '☰';
+  }
+}
+
+// Close menu when clicking on nav item (mobile)
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if(window.innerWidth <= 768){
+      toggleMenu();
+    }
+  });
+});
+
+/* -----------------------------------------
+   DATA
+--------------------------------------------*/
+const stats = {
+  checkinsToday: 18,
+  checkoutsToday: 12,
+  pax: 42,
+  rooms: 50,
+  occupancyRate: 84
+};
+
+// Update metric displays
+document.getElementById("mCheckins").textContent  = stats.checkinsToday;
+document.getElementById("mCheckouts").textContent = stats.checkoutsToday;
+document.getElementById("mPax").textContent       = stats.pax;
+document.getElementById("mOcc").textContent       = stats.occupancyRate + "%";
+
+
+/* -----------------------------------------
+   CHART.JS CHARTS
+--------------------------------------------*/
+
+// Occupancy Trend Chart
+const occCtx = document.getElementById('occChart');
+new Chart(occCtx, {
+  type: 'line',
+  data: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Occupancy %',
+      data: [68, 58, 72, 75, 80, 92, 84],
+      borderColor: '#64b5f6',
+      backgroundColor: 'rgba(100, 181, 246, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      pointBackgroundColor: '#64b5f6',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(38, 50, 56, 0.95)',
+        padding: 12,
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderColor: '#64b5f6',
+        borderWidth: 1,
+        displayColors: false,
+        callbacks: {
+          label: (context) => `Occupancy: ${context.parsed.y}%`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: (value) => value + '%',
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)',
+          drawBorder: false
+        }
+      },
+      x: {
+        ticks: {
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          display: false
+        }
+      }
+    }
+  }
+});
+
+// Guest Flow Chart
+const flowCtx = document.getElementById('flowChart');
+new Chart(flowCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [
+      {
+        label: 'Check-ins',
+        data: [15, 12, 16, 18, 20, 24, 18],
+        backgroundColor: '#64b5f6',
+        borderRadius: 8,
+        borderSkipped: false
+      },
+      {
+        label: 'Check-outs',
+        data: [14, 10, 13, 16, 18, 22, 12],
+        backgroundColor: '#f06292',
+        borderRadius: 8,
+        borderSkipped: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(38, 50, 56, 0.95)',
+        padding: 12,
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderColor: '#64b5f6',
+        borderWidth: 1
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)',
+          drawBorder: false
+        }
+      },
+      x: {
+        ticks: {
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          display: false
+        }
+      }
+    }
+  }
+});
+
+// Revenue Chart
+const revenueCtx = document.getElementById('revenueChart');
+new Chart(revenueCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    datasets: [{
+      label: 'Revenue',
+      data: [42500, 34200, 48600, 51200, 56800, 64500, 44700],
+      backgroundColor: 'rgba(186, 104, 200, 0.8)',
+      borderRadius: 8,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(38, 50, 56, 0.95)',
+        padding: 12,
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        borderColor: '#ba68c8',
+        borderWidth: 1,
+        callbacks: {
+          label: (context) => `Revenue: ₹${context.parsed.y.toLocaleString()}`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value) => '₹' + (value/1000) + 'k',
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)',
+          drawBorder: false
+        }
+      },
+      x: {
+        ticks: {
+          color: '#78909c',
+          font: { size: 11 }
+        },
+        grid: {
+          display: false
+        }
+      }
+    }
+  }
+});
+
+
+/* -----------------------------------------
+   EXPORT FUNCTIONS
+--------------------------------------------*/
+function exportCSV(){
+  // Generate CSV data
+  const csvData = [
+    ['Sarai 2.0 - Weekly Report'],
+    ['Generated:', new Date().toLocaleString()],
+    [''],
+    ['Metric', 'Value'],
+    ['Total Check-ins', '126'],
+    ['Total Check-outs', '118'],
+    ['Average Occupancy', '78%'],
+    ['Total Revenue', '₹3,42,500'],
+    ['Average Daily Rate', '₹2,850']
+  ];
+  
+  const csv = csvData.map(row => row.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sarai-report-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+}
+
+function exportPDF(){
+  alert("PDF Export feature coming soon!\n\nThis will generate a comprehensive PDF report with all charts and metrics.");
+}
+
+function exportExcel(){
+  alert("Excel Export feature coming soon!\n\nThis will generate a detailed Excel workbook with multiple sheets.");
+}
+
+</script>
+
+</body>
+</html>
